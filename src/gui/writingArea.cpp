@@ -13,6 +13,7 @@ WritingArea::~WritingArea() {
 void WritingArea::tabletEvent(QTabletEvent *event) {
     event->accept();
     auto point = event->position().toPoint();
+    std::cout << "Event type: " << event->type() << std::endl;
     std::cout << std::format("x: {}, y: {}, rx: {}, ry: {}",
         point.x(), point.y(), point.rx(), point.ry()) << std::endl;
     // if (event->type)
