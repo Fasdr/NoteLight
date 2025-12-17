@@ -1,27 +1,44 @@
 #include <guiInternal.h>
 
 #include <QMenuBar>
-#include <QAction>
 
 #include <iostream>
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
+    configureFileMenu();
+    auto extraStuff = menuBar()->addMenu(tr("&Extra"));
+    QAction* actionExtra = new QAction(tr("&Extra"), this);
+    extraStuff->addAction(actionExtra);
+}
+
+void MainWindow::configureFileMenu() {
+    connect(&fileActions.actionNewFile, &QAction::triggered, this, &MainWindow::newFile);
+    connect(&fileActions.actionOpenFile, &QAction::triggered, this, &MainWindow::openFile);
+    connect(&fileActions.actionSaveFile, &QAction::triggered, this, &MainWindow::saveFile);
+
+    auto fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addActions({
+        &fileActions.actionNewFile,
+        &fileActions.actionOpenFile,
+        &fileActions.actionSaveFile});
+    // fileMenu->addAction(&fileActions.actionNewFile);
+    // fileMenu->addAction(&fileActions.actionOpenFile);
+    // fileMenu->addAction(&fileActions.actionSaveFile);
     
-    auto testAction = new QAction(tr("&Print"), this);
-    connect(testAction, &QAction::triggered, this, &MainWindow::testConsole);
-    auto testAction1 = new QAction(tr("&Print1"), this);
-    connect(testAction1, &QAction::triggered, this, &MainWindow::testConsole);
-
-    auto fileMenu = menuBar()->addMenu(tr("&Test"));
-    fileMenu->addAction(testAction);
-    fileMenu->addAction(testAction1);
-
 }
 
 MainWindow::~MainWindow() {
 
 }
 
-void MainWindow::testConsole() {
-    std::cout << "Hi!" << std::endl;
+void MainWindow::newFile() {
+    std::cout << "TODO: new file" << std::endl;
+}
+
+void MainWindow::openFile() {
+    std::cout << "TODO: open file" << std::endl;
+}
+
+void MainWindow::saveFile() {
+    std::cout << "TODO: save file" << std::endl;
 }
