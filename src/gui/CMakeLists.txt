@@ -16,6 +16,7 @@ target_sources(guiFunctional
 qt_add_library(guiInternal
     guiInternal.h
     mainWindow.cpp
+    writingArea.cpp
 )
 
 target_sources(guiInternal

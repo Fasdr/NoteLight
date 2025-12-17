@@ -4,11 +4,12 @@
 
 #include <iostream>
 
-MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
+MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), writingArea(this) {
+    setCentralWidget(&writingArea);
     configureFileMenu();
-    auto extraStuff = menuBar()->addMenu(tr("&Extra"));
-    QAction* actionExtra = new QAction(tr("&Extra"), this);
-    extraStuff->addAction(actionExtra);
+    // auto extraStuff = menuBar()->addMenu(tr("&Extra"));
+    // QAction* actionExtra = new QAction(tr("&Extra"), this);
+    // extraStuff->addAction(actionExtra);
 }
 
 void MainWindow::configureFileMenu() {
@@ -21,10 +22,6 @@ void MainWindow::configureFileMenu() {
         &fileActions.actionNewFile,
         &fileActions.actionOpenFile,
         &fileActions.actionSaveFile});
-    // fileMenu->addAction(&fileActions.actionNewFile);
-    // fileMenu->addAction(&fileActions.actionOpenFile);
-    // fileMenu->addAction(&fileActions.actionSaveFile);
-    
 }
 
 MainWindow::~MainWindow() {

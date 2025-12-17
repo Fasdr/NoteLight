@@ -3,6 +3,19 @@
 #include <QWidget>
 #include <QMainWindow>
 #include <QAction>
+#include <QMouseEvent>
+
+class WritingArea : public QWidget{
+    Q_OBJECT
+    public:
+        WritingArea(QWidget* parent = nullptr);
+        ~WritingArea();
+
+    protected:
+        // void mousePressEvent(QMouseEvent *event) override;
+        void tabletEvent(QTabletEvent *event) override;
+
+};
 
 class FileActions : public QObject {
     Q_OBJECT
@@ -26,4 +39,6 @@ class MainWindow : public QMainWindow {
 
         FileActions fileActions;
         void configureFileMenu();
+
+        WritingArea writingArea;
 };
