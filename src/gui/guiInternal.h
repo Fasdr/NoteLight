@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QAction>
 #include <QMouseEvent>
+#include <QPixmap>
+
 
 class WritingArea : public QWidget{
     Q_OBJECT
@@ -14,6 +16,10 @@ class WritingArea : public QWidget{
     protected:
         // void mousePressEvent(QMouseEvent *event) override;
         void tabletEvent(QTabletEvent *event) override;
+        void paintEvent(QPaintEvent *event) override;
+
+    private:
+        QPixmap canvasImage;
 
 };
 

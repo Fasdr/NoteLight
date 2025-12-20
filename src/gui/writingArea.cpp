@@ -1,9 +1,16 @@
 #include <guiInternal.h>
+#include <QPainter>
+#include <QGuiApplication>
 
 #include <iostream>
 
-WritingArea::WritingArea(QWidget* parent) : QWidget(parent) {
+WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
+        canvasImage(QGuiApplication::primaryScreen()->geometry().width(),
+         QGuiApplication::primaryScreen()->geometry().height()) {
     setAttribute(Qt::WA_StaticContents);
+    std::cout << QGuiApplication::primaryScreen()->geometry().width() << std::endl;
+    std::cout << QGuiApplication::primaryScreen()->geometry().height() << std::endl;
+    canvasImage.fill(qRgb(0, 0, 0));
 }
 
 WritingArea::~WritingArea() {
@@ -26,3 +33,8 @@ void WritingArea::tabletEvent(QTabletEvent *event) {
 //             point.x(), point.y(), point.rx(), point.ry()) << std::endl;
 //     }
 // }
+
+void WritingArea::paintEvent(QPaintEvent *event) {
+    QPainter painter(this);
+    painter.drawPixmap(0, 0, canvasImage);
+}
