@@ -2,15 +2,25 @@
 #include <QPainter>
 #include <QGuiApplication>
 
+
+
 #include <iostream>
 
 WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
         canvasImage(QGuiApplication::primaryScreen()->geometry().width(),
          QGuiApplication::primaryScreen()->geometry().height()) {
     setAttribute(Qt::WA_StaticContents);
+    canvasImage.fill(qRgb(0, 0, 0));
     std::cout << QGuiApplication::primaryScreen()->geometry().width() << std::endl;
     std::cout << QGuiApplication::primaryScreen()->geometry().height() << std::endl;
-    canvasImage.fill(qRgb(0, 0, 0));
+    std::cout << devicePixelRatio() << std::endl;
+    std::cout << devicePixelRatioF() << std::endl;
+
+    QPainter canvasPainter(&canvasImage);
+    QPen canvasPen(Qt::white, 2.0);
+    canvasPainter.setPen(canvasPen);
+    canvasPainter.drawLine(0, 0, 500, 500);
+
 }
 
 WritingArea::~WritingArea() {
