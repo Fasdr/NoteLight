@@ -32,6 +32,12 @@ class FileActions : public QObject {
 
 };
 
+class SettingsActions : public QObject {
+    Q_OBJECT
+    public:
+        QAction actionChooseFont = QAction(tr("&Font"), nullptr);
+};
+
 class MainWindow : public QMainWindow {
     Q_OBJECT
     public:
@@ -39,12 +45,16 @@ class MainWindow : public QMainWindow {
         ~MainWindow();
 
     private:
+
+        FileActions fileActions;
+        void configureFileMenu();
         void newFile();
         void openFile();
         void saveFile();
 
-        FileActions fileActions;
-        void configureFileMenu();
+        SettingsActions settingsActions;
+        void configureSettingsMenu();
+        void chooseFont();
 
         WritingArea writingArea;
 };

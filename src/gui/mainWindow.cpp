@@ -1,15 +1,14 @@
 #include <guiInternal.h>
 
 #include <QMenuBar>
+#include <QFontDialog>
 
 #include <iostream>
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), writingArea(this) {
-    setCentralWidget(&writingArea);
     configureFileMenu();
-    // auto extraStuff = menuBar()->addMenu(tr("&Extra"));
-    // QAction* actionExtra = new QAction(tr("&Extra"), this);
-    // extraStuff->addAction(actionExtra);
+    configureSettingsMenu();
+    setCentralWidget(&writingArea);
 }
 
 void MainWindow::configureFileMenu() {
@@ -22,6 +21,18 @@ void MainWindow::configureFileMenu() {
         &fileActions.actionNewFile,
         &fileActions.actionOpenFile,
         &fileActions.actionSaveFile});
+
+    // auto extraStuff = menuBar()->addMenu(tr("&Extra"));
+    // QAction* actionExtra = new QAction(tr("&Extra"), this);
+    // extraStuff->addAction(actionExtra);
+}
+
+void MainWindow::configureSettingsMenu() {
+    connect(&settingsActions.actionChooseFont, &QAction::triggered, this, &MainWindow::chooseFont);
+
+    auto settingsMenu = menuBar()->addMenu(tr("&Settings"));
+    settingsMenu->addActions({
+        &settingsActions.actionChooseFont});
 }
 
 MainWindow::~MainWindow() {
@@ -38,4 +49,15 @@ void MainWindow::openFile() {
 
 void MainWindow::saveFile() {
     std::cout << "TODO: save file" << std::endl;
+}
+
+void MainWindow::chooseFont() {
+    // QFont currentFont = qApp->font();
+    // currentFont.setPointSize(28);
+    // qApp->setFont(currentFont);
+    bool updated = false;
+    QFont updatedFont = QFontDialog::getFont(&updated, qApp->font());
+    if (updated) {
+        qApp->setFont(updatedFont);
+    }
 }

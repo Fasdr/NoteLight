@@ -1,9 +1,6 @@
 #include <QApplication>
 #include <guiInternal.h>
 
-#include <iostream>
-#include <string>
-
 namespace gui_f {
     int startApp(int argc, char *argv[]) {
 
@@ -11,8 +8,13 @@ namespace gui_f {
         qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "0");
         qputenv("QT_SCALE_FACTOR", "1");
         qputenv("QT_FONT_DPI", "96");
-        
+
         QApplication app(argc, argv);
+        
+        QFont font = app.font();
+        font.setPointSize(14);
+        app.setFont(font);
+        
         MainWindow window;
         window.showMaximized();
         return app.exec();
