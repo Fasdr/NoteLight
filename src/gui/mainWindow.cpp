@@ -1,14 +1,31 @@
 #include <guiInternal.h>
 
 #include <QMenuBar>
+
 #include <QFontDialog>
+#include <QMessageBox>
 
 #include <iostream>
 
-MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), writingArea(this) {
+MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent),
+        appSettings("./appSettings.ini", QSettings::IniFormat),
+        writingArea(this) {
+    
+    loadSettings();
     configureFileMenu();
     configureSettingsMenu();
     setCentralWidget(&writingArea);
+}
+
+void MainWindow::loadSettings() {
+    QFont currentFont;
+    if (appSettings.contains("Font")) {
+        currentFont = appSettings.value("Font").value<QFont>();
+    } else {
+        currentFont = QFont("FreeSans", 20, QFont::Normal, false);
+        appSettings.setValue("Font", currentFont);
+    }
+    qApp->setFont(currentFont);
 }
 
 void MainWindow::configureFileMenu() {
@@ -29,10 +46,14 @@ void MainWindow::configureFileMenu() {
 
 void MainWindow::configureSettingsMenu() {
     connect(&settingsActions.actionChooseFont, &QAction::triggered, this, &MainWindow::chooseFont);
+    connect(&settingsActions.actionSetDefault, &QAction::triggered, this, &MainWindow::setDefault);
 
     auto settingsMenu = menuBar()->addMenu(tr("&Settings"));
     settingsMenu->addActions({
         &settingsActions.actionChooseFont});
+    settingsMenu->addSeparator();
+    settingsMenu->addActions({
+        &settingsActions.actionSetDefault});
 }
 
 MainWindow::~MainWindow() {
@@ -52,12 +73,24 @@ void MainWindow::saveFile() {
 }
 
 void MainWindow::chooseFont() {
-    // QFont currentFont = qApp->font();
-    // currentFont.setPointSize(28);
-    // qApp->setFont(currentFont);
     bool updated = false;
-    QFont updatedFont = QFontDialog::getFont(&updated, qApp->font());
+    QFont updatedFont = QFontDialog::getFont(&updated, qApp->font(), this);
+    appSettings.setValue("Font", updatedFont);
     if (updated) {
         qApp->setFont(updatedFont);
+    }
+}
+
+void MainWindow::setDefault() {
+    QMessageBox defaultConfirmation;
+    defaultConfirmation.setText("This operation will revert all application settings to defult. Are you sure that you want to proceed?");
+    defaultConfirmation.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    defaultConfirmation.setDefaultButton(QMessageBox::No);
+
+    int response = defaultConfirmation.exec();
+    if (response == QMessageBox::Yes) {
+        std::cout << "Test" << std::endl;
+        appSettings.clear();
+        loadSettings();
     }
 }

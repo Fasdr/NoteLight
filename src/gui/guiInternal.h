@@ -5,6 +5,7 @@
 #include <QAction>
 #include <QMouseEvent>
 #include <QPixmap>
+#include <QSettings>
 
 
 class WritingArea : public QWidget{
@@ -36,6 +37,7 @@ class SettingsActions : public QObject {
     Q_OBJECT
     public:
         QAction actionChooseFont = QAction(tr("&Font"), nullptr);
+        QAction actionSetDefault = QAction(tr("&Set default"), nullptr);
 };
 
 class MainWindow : public QMainWindow {
@@ -46,6 +48,9 @@ class MainWindow : public QMainWindow {
 
     private:
 
+        QSettings appSettings;
+        void loadSettings();
+
         FileActions fileActions;
         void configureFileMenu();
         void newFile();
@@ -55,6 +60,7 @@ class MainWindow : public QMainWindow {
         SettingsActions settingsActions;
         void configureSettingsMenu();
         void chooseFont();
+        void setDefault();
 
         WritingArea writingArea;
 };

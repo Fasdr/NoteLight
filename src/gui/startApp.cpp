@@ -10,13 +10,13 @@ namespace gui_f {
         qputenv("QT_FONT_DPI", "96");
 
         QApplication app(argc, argv);
-        
-        QFont font = app.font();
-        font.setPointSize(14);
+
+        QFont font{app.font()};
         app.setFont(font);
-        
+
         MainWindow window;
         window.showMaximized();
+
         return app.exec();
     }
 }
