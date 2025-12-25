@@ -88,8 +88,8 @@ int WritingArea::processSegment(QPointF startPoint, QPointF endPoint) {
 
     auto [miI, maI] = std::minmax(si, ei);
     auto [miJ, maJ] = std::minmax(sj, ej);
-    for (int i = miI; i <= maI; ++i) {
-        for (int j = miJ; j <= maJ; ++j) {
+    for (int i{miI}; i <= maI; ++i) {
+        for (int j{miJ}; j <= maJ; ++j) {
             internalStore[combineIntoIndex(i, j)].push_back(thisSegment);
         }
     }
@@ -141,9 +141,13 @@ int WritingArea::recreateCanvas() {
     QPen tempPen;
     canvasPainter.setPen(tempPen);
 
-    for (int i = miI; i <= maI; ++i) {
-        for (int j = miJ; j <= maJ; ++j) {
-            int idx = combineIntoIndex(i, j);
+    for (auto [id, v] : internalStore) {
+        std::cout << "id: " << id << " V size: " << v.size() << std::endl;
+    }
+
+    for (int i{miI}; i <= maI; ++i) {
+        for (int j{miJ}; j <= maJ; ++j) {
+            int idx{combineIntoIndex(i, j)};
             if (internalStore.contains(idx)) {
                 for (const LineSegment& thatSegment : internalStore[idx]) {
                     tempPen.setColor(thatSegment.color);
