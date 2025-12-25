@@ -160,7 +160,7 @@ int WritingArea::recreateCanvas() {
                 for (const LineSegment& thatSegment : internalStore[idx]) {
                     tempPen.setColor(thatSegment.color);
                     tempPen.setWidthF(thatSegment.width * zoom);
-                    std::cout << thatSegment.width * zoom << std::endl;
+                    canvasPainter.setPen(tempPen);
                     canvasPainter.drawLine(
                         (thatSegment.start - startCorner) * zoom, 
                         (thatSegment.end - startCorner) * zoom);
