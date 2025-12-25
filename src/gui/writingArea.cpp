@@ -78,7 +78,7 @@ int WritingArea::processSegment(QPointF startPoint, QPointF endPoint) {
         -canvasPen.widthF(), -canvasPen.widthF(), +canvasPen.widthF(), +canvasPen.widthF()).toRect());
     
     startPoint = zoom * startPoint + QPointF{xOrigin, yOrigin};
-    endPoint = zoom * startPoint + QPointF{xOrigin, yOrigin};
+    endPoint = zoom * endPoint + QPointF{xOrigin, yOrigin};
 
     LineSegment thisSegment{
         startPoint, endPoint, canvasPen.color(), zoom * canvasPen.widthF()};
