@@ -73,7 +73,7 @@ void MainWindow::saveFile() {
 }
 
 void MainWindow::chooseFont() {
-    bool updated = false;
+    bool updated{false};
     QFont updatedFont = QFontDialog::getFont(&updated, qApp->font(), this);
     appSettings.setValue("Font", updatedFont);
     if (updated) {

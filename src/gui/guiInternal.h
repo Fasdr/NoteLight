@@ -7,6 +7,8 @@
 #include <QPixmap>
 #include <QSettings>
 #include <QPen>
+#include <QVBoxLayout>
+#include <QPushButton>
 
 #include <unordered_map>
 #include <utility>
@@ -16,6 +18,13 @@ class DrawingToolsMenu : public QWidget {
     public:
         DrawingToolsMenu(QWidget* parent = nullptr);
         ~DrawingToolsMenu();
+
+    signals:
+        void requireBackgroundColor();
+
+    private:
+        QVBoxLayout menuLayout;
+        QPushButton backgroundColorButton;
 };
 
 struct LineSegment {
@@ -34,6 +43,10 @@ class WritingArea : public QWidget{
         // void mousePressEvent(QMouseEvent *event) override;
         void tabletEvent(QTabletEvent *event) override;
         void paintEvent(QPaintEvent *event) override;
+        void resizeEvent(QResizeEvent *event) override;
+
+    public slots:
+        void updateBackgroundColor();
 
     private:
         DrawingToolsMenu drawingToolsMenu;
@@ -50,6 +63,8 @@ class WritingArea : public QWidget{
 
         int processSegment(QPointF startPoint, QPointF finishPoint);
         int recreateCanvas();
+
+        void updateDrawingToolsMenuPosition();
 };
 
 class FileActions : public QObject {

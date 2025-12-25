@@ -2,6 +2,7 @@
 #include <QPainter>
 #include <QGuiApplication>
 #include <QRectF>
+#include <QColorDialog>
 
 #include <algorithm>
 #include <iostream>
@@ -17,6 +18,9 @@ WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
     
     
     canvasImage.fill(canvasBackgroundColor);
+
+    connect(&drawingToolsMenu, &DrawingToolsMenu::requireBackgroundColor,
+            this, &WritingArea::updateBackgroundColor);
     // std::cout << QGuiApplication::primaryScreen()->geometry().width() << std::endl;
     // std::cout << QGuiApplication::primaryScreen()->geometry().height() << std::endl;
     // std::cout << QGuiApplication::primaryScreen()->devicePixelRatio() << std::endl;
@@ -93,8 +97,6 @@ int WritingArea::processSegment(QPointF startPoint, QPointF endPoint) {
     return 0;
 }
 
-
-
 // void WritingArea::mousePressEvent(QMouseEvent *event) {
 //     if (event->button() == Qt::LeftButton) {
 //         auto point = event->position().toPoint();
@@ -111,6 +113,13 @@ void WritingArea::paintEvent(QPaintEvent *event) {
     // std::cout << "W: " << this->geometry().width() << " H: " << this->geometry().height() << std::endl;
 }
 
+void WritingArea::updateBackgroundColor() {
+    QColor updatedBackgroundColor = QColorDialog::getColor(canvasBackgroundColor, this);
+    if (updatedBackgroundColor.isValid() && updatedBackgroundColor != canvasBackgroundColor) {
+        canvasBackgroundColor = updatedBackgroundColor;
+        recreateCanvas();
+    }
+}
 
 int WritingArea::recreateCanvas() {
 
@@ -149,6 +158,27 @@ int WritingArea::recreateCanvas() {
     update();
 
     return 0;
+}
+
+void WritingArea::resizeEvent(QResizeEvent *event) {
+    QWidget::resizeEvent(event);
+
+    if (this->geometry().width() > canvasImage.width() 
+            || this->geometry().height() > canvasImage.height()) {
+        int extraMargin = 256;
+        canvasImage = QPixmap(this->geometry().width() + extraMargin,
+                                this->geometry().height() + extraMargin);
+        recreateCanvas();
+    }
+
+    updateDrawingToolsMenuPosition();
+}
+
+void WritingArea::updateDrawingToolsMenuPosition() {
+    int margin = 10;
+    drawingToolsMenu.move(
+        margin,
+        this->height() - drawingToolsMenu.height() - margin);
 }
 
 inline std::pair<int, int> WritingArea::getCoordinates(QPointF point) {
