@@ -150,7 +150,7 @@ int WritingArea::recreateCanvas() {
     
     QPainter canvasPainter(&canvasImage);
     canvasPainter.setRenderHint(QPainter::Antialiasing, true);
-    QPen tempPen = canvasPen;
+    QPen tempPen{canvasPen};
     canvasPainter.setPen(tempPen);
 
     for (int i{miI}; i <= maI; ++i) {
@@ -160,6 +160,7 @@ int WritingArea::recreateCanvas() {
                 for (const LineSegment& thatSegment : internalStore[idx]) {
                     tempPen.setColor(thatSegment.color);
                     tempPen.setWidthF(thatSegment.width * zoom);
+                    std::cout << thatSegment.width * zoom << std::endl;
                     canvasPainter.drawLine(
                         (thatSegment.start - startCorner) * zoom, 
                         (thatSegment.end - startCorner) * zoom);
