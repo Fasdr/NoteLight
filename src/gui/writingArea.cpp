@@ -27,7 +27,8 @@ WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
     // QPen canvasPen(Qt::white, 4.0);
     // canvasPainter.setPen(canvasPen);
     // canvasPainter.drawLine(0, 0, QGuiApplication::primaryScreen()->geometry().width() / 2, 200);
-
+    
+    canvasPen = QPen(Qt::white, 4.0);
 }
 
 WritingArea::~WritingArea() {
@@ -39,15 +40,16 @@ void WritingArea::tabletEvent(QTabletEvent *event) {
     auto point = event->position();
 
     switch (event->type()) {
+        case QEvent::TabletMove:
+            processSegment(lastPoint, point);
+            lastPoint = point;
+            return;
         case QEvent::TabletPress:
             lastPoint = point;
-            std::cout << "x: " << lastPoint.x() << " y: " << lastPoint.y() << std::endl;
             return;
         case QEvent::TabletRelease:
+            processSegment(lastPoint, point);
             lastPoint = point;
-            std::cout << "x: " << lastPoint.x() << " y: " << lastPoint.y() << std::endl;
-            return;
-        case QEvent::TabletMove:
             return;
         default:
             return;
@@ -59,6 +61,18 @@ void WritingArea::tabletEvent(QTabletEvent *event) {
     //     point.x(), point.y(), point.rx(), point.ry()) << std::endl;
     // if (event->type)
 }
+
+int WritingArea::processSegment(QPointF startPoint, QPointF finishPoint) {
+
+    QPainter canvasPainter(&canvasImage);
+    canvasPainter.setRenderHint(QPainter::Antialiasing, true);
+    canvasPainter.setPen(canvasPen);
+    canvasPainter.drawLine(startPoint, finishPoint);
+    
+    return 0;
+}
+
+
 
 // void WritingArea::mousePressEvent(QMouseEvent *event) {
 //     if (event->button() == Qt::LeftButton) {
