@@ -146,7 +146,6 @@ int WritingArea::recreateCanvas() {
     for (int i{miI}; i <= maI; ++i) {
         for (int j{miJ}; j <= maJ; ++j) {
             int idx{combineIntoIndex(i, j)};
-            std::cout << "idx: " << idx << std::endl;
             if (internalStore.contains(idx)) {
                 for (const LineSegment& thatSegment : internalStore[idx]) {
                     tempPen.setColor(thatSegment.color);
