@@ -41,11 +41,11 @@ void WritingArea::tabletEvent(QTabletEvent *event) {
     switch (event->type()) {
         case QEvent::TabletPress:
             lastPoint = point;
-            std::cout << "x: " << lastPoint.x() << " y: " << lastPoint.y();
+            std::cout << "x: " << lastPoint.x() << " y: " << lastPoint.y() << std::endl;
             return;
         case QEvent::TabletRelease:
             lastPoint = point;
-            std::cout << "x: " << lastPoint.x() << " y: " << lastPoint.y();
+            std::cout << "x: " << lastPoint.x() << " y: " << lastPoint.y() << std::endl;
             return;
         case QEvent::TabletMove:
             return;
