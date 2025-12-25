@@ -8,25 +8,49 @@
 #include <QSettings>
 #include <QPen>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QPushButton>
-#include <QSpinBox>
 
 #include <unordered_map>
 #include <utility>
+
+class ZoomControl : public QWidget {
+    Q_OBJECT
+    public:
+        ZoomControl(QWidget* parent = nullptr);
+        ~ZoomControl();
+
+    public slots:
+        void decreaseZoomClicked();
+        void increaseZoomClicked();
+
+    signals:
+        void zoomValueChanged(int newZoomValue);
+
+    private:
+        int zoomValue{100};
+        int stepSize{25}, minVal{25}, maxVal{400};
+        QHBoxLayout zoomLayout;
+        QPushButton increaseButton;
+        QPushButton zoomButton;
+        QPushButton decreaseButton;
+        void setZoomValue(int newZoomValue);
+};
 
 class DrawingToolsMenu : public QWidget {
     Q_OBJECT
     public:
         DrawingToolsMenu(QWidget* parent = nullptr);
         ~DrawingToolsMenu();
-
+        ZoomControl* getZoomControlP();
+        
     signals:
         void requireBackgroundColor();
 
     private:
         QVBoxLayout menuLayout;
         QPushButton backgroundColorButton;
-        QSpinBox zoomSpinBox;
+        ZoomControl zoomControl;
 };
 
 struct LineSegment {
@@ -106,6 +130,7 @@ class MainWindow : public QMainWindow {
         SettingsActions settingsActions;
         void configureSettingsMenu();
         void chooseFont();
+        void applyFontToDrawingTools();
         void setDefault();
 
         WritingArea writingArea;

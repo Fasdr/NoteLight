@@ -26,6 +26,7 @@ void MainWindow::loadSettings() {
         appSettings.setValue("Font", currentFont);
     }
     qApp->setFont(currentFont);
+    applyFontToDrawingTools();
 }
 
 void MainWindow::configureFileMenu() {
@@ -78,7 +79,14 @@ void MainWindow::chooseFont() {
     appSettings.setValue("Font", updatedFont);
     if (updated) {
         qApp->setFont(updatedFont);
+        applyFontToDrawingTools();
     }
+}
+
+void MainWindow::applyFontToDrawingTools() {
+    QFont curFont = qApp->font();
+    curFont.setPointSize(curFont.pointSize() * 1.5);
+    writingArea.setFont(curFont);
 }
 
 void MainWindow::setDefault() {

@@ -21,6 +21,10 @@ WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
 
     connect(&drawingToolsMenu, &DrawingToolsMenu::requireBackgroundColor,
             this, &WritingArea::updateBackgroundColor);
+    
+    connect(drawingToolsMenu.getZoomControlP(), &ZoomControl::zoomValueChanged,
+            this, &WritingArea::updateZoom);
+
     // std::cout << QGuiApplication::primaryScreen()->geometry().width() << std::endl;
     // std::cout << QGuiApplication::primaryScreen()->geometry().height() << std::endl;
     // std::cout << QGuiApplication::primaryScreen()->devicePixelRatio() << std::endl;
@@ -125,8 +129,7 @@ void WritingArea::updateZoom(int newZoomValue) {
     double newZoom{static_cast<double>(newZoomValue) / 100};
     if (newZoom != zoom) {
         zoom = newZoom;
-        // recreateCanvas();
-        std::cout << "New zoom: " << zoom << std::endl;
+        recreateCanvas();
     }
 }
 
@@ -138,8 +141,6 @@ int WritingArea::recreateCanvas() {
     QPointF endCorner = startCorner + zoom * QPointF{
         static_cast<double>(this->geometry().width()),
         static_cast<double>(this->geometry().height())};
-
-    
 
     auto [si, sj] = getCoordinates(startCorner);
     auto [ei, ej] = getCoordinates(endCorner);
