@@ -9,6 +9,7 @@
 #include <QPen>
 #include <QVBoxLayout>
 #include <QPushButton>
+#include <QSpinBox>
 
 #include <unordered_map>
 #include <utility>
@@ -25,6 +26,7 @@ class DrawingToolsMenu : public QWidget {
     private:
         QVBoxLayout menuLayout;
         QPushButton backgroundColorButton;
+        QSpinBox zoomSpinBox;
 };
 
 struct LineSegment {
@@ -47,6 +49,7 @@ class WritingArea : public QWidget{
 
     public slots:
         void updateBackgroundColor();
+        void updateZoom(int newZoomValue);
 
     private:
         DrawingToolsMenu drawingToolsMenu;

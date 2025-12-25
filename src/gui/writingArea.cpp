@@ -121,6 +121,15 @@ void WritingArea::updateBackgroundColor() {
     }
 }
 
+void WritingArea::updateZoom(int newZoomValue) {
+    double newZoom{static_cast<double>(newZoomValue) / 100};
+    if (newZoom != zoom) {
+        zoom = newZoom;
+        // recreateCanvas();
+        std::cout << "New zoom: " << zoom << std::endl;
+    }
+}
+
 int WritingArea::recreateCanvas() {
 
     canvasImage.fill(canvasBackgroundColor);
