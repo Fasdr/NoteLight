@@ -1,6 +1,7 @@
 #include <guiInternal.h>
 #include <QPainter>
 #include <QGuiApplication>
+#include <QRectF>
 
 #include <algorithm>
 #include <iostream>
@@ -68,6 +69,8 @@ int WritingArea::processSegment(QPointF startPoint, QPointF finishPoint) {
     canvasPainter.setRenderHint(QPainter::Antialiasing, true);
     canvasPainter.setPen(canvasPen);
     canvasPainter.drawLine(startPoint, finishPoint);
+    update(QRectF(startPoint, finishPoint).normalized().adjusted(
+        -canvasPen.widthF(), -canvasPen.widthF(), +canvasPen.widthF(), +canvasPen.widthF()).toRect());
     
     return 0;
 }
