@@ -7,6 +7,14 @@
 #include <QPixmap>
 #include <QSettings>
 
+#include <unordered_map>
+#include <utility>
+
+struct LineSegment {
+    QPointF start, end;
+    QColor color;
+    float width;
+};
 
 class WritingArea : public QWidget{
     Q_OBJECT
@@ -20,8 +28,14 @@ class WritingArea : public QWidget{
         void paintEvent(QPaintEvent *event) override;
 
     private:
-        QPixmap canvasImage;
+        std::pair<int, int> getCoordinates(QPointF point);
 
+        QPixmap canvasImage;
+        float xOrgin{}, yOrigin{}, zoom{1.0};
+        int patchSize;
+        int nPatches{2000}; // is not consistent with different screens, will be fixed later
+        std::unordered_map<int, std::vector<LineSegment>> internalStore;
+        QPointF lastPoint;
 };
 
 class FileActions : public QObject {

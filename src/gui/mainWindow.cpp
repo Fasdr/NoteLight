@@ -89,7 +89,6 @@ void MainWindow::setDefault() {
 
     int response = defaultConfirmation.exec();
     if (response == QMessageBox::Yes) {
-        std::cout << "Test" << std::endl;
         appSettings.clear();
         loadSettings();
     }

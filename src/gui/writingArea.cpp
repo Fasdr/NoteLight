@@ -2,14 +2,17 @@
 #include <QPainter>
 #include <QGuiApplication>
 
-
-
+#include <algorithm>
 #include <iostream>
+#include <cmath>
 
 WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
-        canvasImage(QGuiApplication::primaryScreen()->geometry().width() * 2,
-         QGuiApplication::primaryScreen()->geometry().height()) {
+        canvasImage(QGuiApplication::primaryScreen()->geometry().width(),
+         QGuiApplication::primaryScreen()->geometry().height()),
+         patchSize(std::max(QGuiApplication::primaryScreen()->geometry().width(),
+                    QGuiApplication::primaryScreen()->geometry().height())) {
     setAttribute(Qt::WA_StaticContents);
+    
     
     canvasImage.fill(qRgb(0, 0, 0));
     // std::cout << QGuiApplication::primaryScreen()->geometry().width() << std::endl;
@@ -17,12 +20,13 @@ WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
     // std::cout << QGuiApplication::primaryScreen()->devicePixelRatio() << std::endl;
     // std::cout << devicePixelRatio() << std::endl;
     // std::cout << devicePixelRatioF() << std::endl;
+    
 
-    QPainter canvasPainter(&canvasImage);
-    canvasPainter.setRenderHint(QPainter::Antialiasing, true);
-    QPen canvasPen(Qt::white, 4.0);
-    canvasPainter.setPen(canvasPen);
-    canvasPainter.drawLine(0, 0, QGuiApplication::primaryScreen()->geometry().width() / 2, 200);
+    // QPainter canvasPainter(&canvasImage);
+    // canvasPainter.setRenderHint(QPainter::Antialiasing, true);
+    // QPen canvasPen(Qt::white, 4.0);
+    // canvasPainter.setPen(canvasPen);
+    // canvasPainter.drawLine(0, 0, QGuiApplication::primaryScreen()->geometry().width() / 2, 200);
 
 }
 
@@ -32,10 +36,27 @@ WritingArea::~WritingArea() {
 
 void WritingArea::tabletEvent(QTabletEvent *event) {
     event->accept();
-    auto point = event->position().toPoint();
-    std::cout << "Event type: " << event->type() << std::endl;
-    std::cout << std::format("x: {}, y: {}, rx: {}, ry: {}",
-        point.x(), point.y(), point.rx(), point.ry()) << std::endl;
+    auto point = event->position();
+
+    switch (event->type()) {
+        case QEvent::TabletPress:
+            lastPoint = point;
+            std::cout << "x: " << lastPoint.x() << " y: " << lastPoint.y();
+            return;
+        case QEvent::TabletRelease:
+            lastPoint = point;
+            std::cout << "x: " << lastPoint.x() << " y: " << lastPoint.y();
+            return;
+        case QEvent::TabletMove:
+            return;
+        default:
+            return;
+    }
+
+
+    // std::cout << "Event type: " << event->type() << std::endl;
+    // std::cout << std::format("x: {}, y: {}, rx: {}, ry: {}",
+    //     point.x(), point.y(), point.rx(), point.ry()) << std::endl;
     // if (event->type)
 }
 
@@ -48,6 +69,14 @@ void WritingArea::tabletEvent(QTabletEvent *event) {
 // }
 
 void WritingArea::paintEvent(QPaintEvent *event) {
+    // canvasImage = QPixmap(this->geometry().width(), this->geometry().height());
+    // canvasImage.fill(qRgb(0, 0, 0));
     QPainter painter(this);
     painter.drawPixmap(0, 0, canvasImage);
+    // std::cout << "W: " << this->geometry().width() << " H: " << this->geometry().height() << std::endl;
+}
+
+inline std::pair<int, int> WritingArea::getCoordinates(QPointF point) {
+    return {static_cast<int>(std::floor(point.rx() / patchSize)),
+             static_cast<int>(std::floor(point.ry() / patchSize))};
 }
