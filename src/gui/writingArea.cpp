@@ -13,7 +13,7 @@ WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
         canvasImage(QGuiApplication::primaryScreen()->geometry().width(),
          QGuiApplication::primaryScreen()->geometry().height()),
          patchSize(std::max(QGuiApplication::primaryScreen()->geometry().width(),
-                    QGuiApplication::primaryScreen()->geometry().height())) {
+                    QGuiApplication::primaryScreen()->geometry().height()) + 256) {
     setAttribute(Qt::WA_StaticContents);
     
     
@@ -90,6 +90,11 @@ int WritingArea::processSegment(QPointF startPoint, QPointF endPoint) {
     auto [miJ, maJ] = std::minmax(sj, ej);
     for (int i{miI}; i <= maI; ++i) {
         for (int j{miJ}; j <= maJ; ++j) {
+            std::cout << "idx: " << combineIntoIndex(i, j) << std::endl;
+            std::cout << "sx: " << thisSegment.start.rx() << " sy: " << thisSegment.start.ry()
+                        << " ex: " << thisSegment.end.rx() << " ey: " << thisSegment.end.ry()
+                        << " w: " << thisSegment.width
+                        << std::endl;
             internalStore[combineIntoIndex(i, j)].push_back(thisSegment);
         }
     }
@@ -130,6 +135,8 @@ int WritingArea::recreateCanvas() {
         static_cast<double>(this->geometry().width()),
         static_cast<double>(this->geometry().height())};
 
+    
+
     auto [si, sj] = getCoordinates(startCorner);
     auto [ei, ej] = getCoordinates(endCorner);
 
@@ -138,18 +145,19 @@ int WritingArea::recreateCanvas() {
     
     QPainter canvasPainter(&canvasImage);
     canvasPainter.setRenderHint(QPainter::Antialiasing, true);
-    QPen tempPen;
+    QPen tempPen = canvasPen;
     canvasPainter.setPen(tempPen);
-
-    for (auto [id, v] : internalStore) {
-        std::cout << "id: " << id << " V size: " << v.size() << std::endl;
-    }
 
     for (int i{miI}; i <= maI; ++i) {
         for (int j{miJ}; j <= maJ; ++j) {
             int idx{combineIntoIndex(i, j)};
+            std::cout << "idx: " << idx << std::endl;
             if (internalStore.contains(idx)) {
                 for (const LineSegment& thatSegment : internalStore[idx]) {
+                    std::cout << "sx: " << thatSegment.start.x() << " sy: " << thatSegment.start.y()
+                                << " ex: " << thatSegment.end.x() << " ey: " << thatSegment.end.y()
+                                << " w: " << thatSegment.width
+                                << std::endl;
                     tempPen.setColor(thatSegment.color);
                     tempPen.setWidthF(thatSegment.width / zoom);
                     canvasPainter.drawLine(
