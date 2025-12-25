@@ -8,6 +8,7 @@
 #include <cmath>
 
 WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
+        drawingToolsMenu(this),
         canvasImage(QGuiApplication::primaryScreen()->geometry().width(),
          QGuiApplication::primaryScreen()->geometry().height()),
          patchSize(std::max(QGuiApplication::primaryScreen()->geometry().width(),
@@ -15,7 +16,7 @@ WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
     setAttribute(Qt::WA_StaticContents);
     
     
-    canvasImage.fill(qRgb(0, 0, 0));
+    canvasImage.fill(canvasBackgroundColor);
     // std::cout << QGuiApplication::primaryScreen()->geometry().width() << std::endl;
     // std::cout << QGuiApplication::primaryScreen()->geometry().height() << std::endl;
     // std::cout << QGuiApplication::primaryScreen()->devicePixelRatio() << std::endl;
@@ -63,15 +64,32 @@ void WritingArea::tabletEvent(QTabletEvent *event) {
     // if (event->type)
 }
 
-int WritingArea::processSegment(QPointF startPoint, QPointF finishPoint) {
-
+int WritingArea::processSegment(QPointF startPoint, QPointF endPoint) {
+    
     QPainter canvasPainter(&canvasImage);
     canvasPainter.setRenderHint(QPainter::Antialiasing, true);
     canvasPainter.setPen(canvasPen);
-    canvasPainter.drawLine(startPoint, finishPoint);
-    update(QRectF(startPoint, finishPoint).normalized().adjusted(
+    canvasPainter.drawLine(startPoint, endPoint);
+    update(QRectF(startPoint, endPoint).normalized().adjusted(
         -canvasPen.widthF(), -canvasPen.widthF(), +canvasPen.widthF(), +canvasPen.widthF()).toRect());
     
+    startPoint = zoom * startPoint + QPointF{xOrigin, yOrigin};
+    endPoint = zoom * startPoint + QPointF{xOrigin, yOrigin};
+
+    LineSegment thisSegment{
+        startPoint, endPoint, canvasPen.color(), zoom * canvasPen.widthF()};
+
+    auto [si, sj] = getCoordinates(startPoint);
+    auto [ei, ej] = getCoordinates(endPoint);
+
+    auto [miI, maI] = std::minmax(si, ei);
+    auto [miJ, maJ] = std::minmax(sj, ej);
+    for (int i = miI; i <= maI; ++i) {
+        for (int j = miJ; j <= maJ; ++j) {
+            internalStore[combineIntoIndex(i, j)].push_back(thisSegment);
+        }
+    }
+
     return 0;
 }
 
@@ -93,7 +111,53 @@ void WritingArea::paintEvent(QPaintEvent *event) {
     // std::cout << "W: " << this->geometry().width() << " H: " << this->geometry().height() << std::endl;
 }
 
+
+int WritingArea::recreateCanvas() {
+
+    canvasImage.fill(canvasBackgroundColor);
+
+    QPointF startCorner{xOrigin, yOrigin};
+    QPointF endCorner = startCorner + zoom * QPointF{
+        static_cast<double>(this->geometry().width()),
+        static_cast<double>(this->geometry().height())};
+
+    auto [si, sj] = getCoordinates(startCorner);
+    auto [ei, ej] = getCoordinates(endCorner);
+
+    auto [miI, maI] = std::minmax(si, ei);
+    auto [miJ, maJ] = std::minmax(sj, ej);
+    
+    QPainter canvasPainter(&canvasImage);
+    canvasPainter.setRenderHint(QPainter::Antialiasing, true);
+    QPen tempPen;
+    canvasPainter.setPen(tempPen);
+
+    for (int i = miI; i <= maI; ++i) {
+        for (int j = miJ; j <= maJ; ++j) {
+            int idx = combineIntoIndex(i, j);
+            if (internalStore.contains(idx)) {
+                for (const LineSegment& thatSegment : internalStore[idx]) {
+                    tempPen.setColor(thatSegment.color);
+                    tempPen.setWidthF(thatSegment.width / zoom);
+                    canvasPainter.drawLine(
+                        (thatSegment.start - startCorner) / zoom, 
+                        (thatSegment.end - startCorner) / zoom);
+                }
+            }
+        }
+    }
+    update();
+
+    return 0;
+}
+
 inline std::pair<int, int> WritingArea::getCoordinates(QPointF point) {
     return {static_cast<int>(std::floor(point.rx() / patchSize)),
              static_cast<int>(std::floor(point.ry() / patchSize))};
+}
+
+inline int WritingArea::combineIntoIndex(int i, int j) {
+    int ni = (i + nPatches / 2);
+    int nj = (j + nPatches / 2);
+    return ni * nPatches + nj;
 }

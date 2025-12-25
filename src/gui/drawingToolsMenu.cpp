@@ -1,0 +1,19 @@
+#include <guiInternal.h>
+
+#include <QVBoxLayout>
+#include <QPushButton>
+
+
+DrawingToolsMenu::DrawingToolsMenu(QWidget* parent) : QWidget(parent) {
+    // setStyleSheet("background-color: rgba(50, 50, 50, 200); border: 4px solid white; border-radius: 5px;");
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(new QPushButton("Tool A"));
+    layout->addWidget(new QPushButton("Tool B"));
+    setLayout(layout);
+    resize(400, 400);
+}
+
+DrawingToolsMenu::~DrawingToolsMenu() {
+
+}
+

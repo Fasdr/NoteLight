@@ -17,6 +17,7 @@ qt_add_library(guiInternal
     guiInternal.h
     mainWindow.cpp
     writingArea.cpp
+    drawingToolsMenu.cpp
 )
 
 target_sources(guiInternal

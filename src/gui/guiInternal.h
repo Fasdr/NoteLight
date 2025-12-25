@@ -11,10 +11,17 @@
 #include <unordered_map>
 #include <utility>
 
+class DrawingToolsMenu : public QWidget {
+    Q_OBJECT
+    public:
+        DrawingToolsMenu(QWidget* parent = nullptr);
+        ~DrawingToolsMenu();
+};
+
 struct LineSegment {
     QPointF start, end;
     QColor color;
-    float width;
+    double width;
 };
 
 class WritingArea : public QWidget{
@@ -29,16 +36,20 @@ class WritingArea : public QWidget{
         void paintEvent(QPaintEvent *event) override;
 
     private:
+        DrawingToolsMenu drawingToolsMenu;
         std::pair<int, int> getCoordinates(QPointF point);
         QPixmap canvasImage;
-        float xOrgin{}, yOrigin{}, zoom{1.0};
+        double xOrigin{}, yOrigin{}, zoom{1.0};
         int patchSize;
         int nPatches{2000}; // is not consistent with different screens, will be fixed later
         std::unordered_map<int, std::vector<LineSegment>> internalStore;
+        int combineIntoIndex(int i, int j);
         QPointF lastPoint;
         QPen canvasPen;
+        QColor canvasBackgroundColor{0, 0, 0};
 
         int processSegment(QPointF startPoint, QPointF finishPoint);
+        int recreateCanvas();
 };
 
 class FileActions : public QObject {
