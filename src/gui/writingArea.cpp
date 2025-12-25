@@ -81,11 +81,11 @@ int WritingArea::processSegment(QPointF startPoint, QPointF endPoint) {
     update(QRectF(startPoint, endPoint).normalized().adjusted(
         -canvasPen.widthF(), -canvasPen.widthF(), +canvasPen.widthF(), +canvasPen.widthF()).toRect());
     
-    startPoint = zoom * startPoint + QPointF{xOrigin, yOrigin};
-    endPoint = zoom * endPoint + QPointF{xOrigin, yOrigin};
+    startPoint = startPoint / zoom + QPointF{xOrigin, yOrigin};
+    endPoint = endPoint / zoom + QPointF{xOrigin, yOrigin};
 
     LineSegment thisSegment{
-        startPoint, endPoint, canvasPen.color(), zoom * canvasPen.widthF()};
+        startPoint, endPoint, canvasPen.color(), canvasPen.widthF() / zoom};
 
     auto [si, sj] = getCoordinates(startPoint);
     auto [ei, ej] = getCoordinates(endPoint);
@@ -159,10 +159,10 @@ int WritingArea::recreateCanvas() {
             if (internalStore.contains(idx)) {
                 for (const LineSegment& thatSegment : internalStore[idx]) {
                     tempPen.setColor(thatSegment.color);
-                    tempPen.setWidthF(thatSegment.width / zoom);
+                    tempPen.setWidthF(thatSegment.width * zoom);
                     canvasPainter.drawLine(
-                        (thatSegment.start - startCorner) / zoom, 
-                        (thatSegment.end - startCorner) / zoom);
+                        (thatSegment.start - startCorner) * zoom, 
+                        (thatSegment.end - startCorner) * zoom);
                 }
             }
         }
