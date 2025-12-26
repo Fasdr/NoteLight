@@ -24,6 +24,9 @@ WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
 
     connect(drawingToolsMenu.getBackgroundColorDialog(), &SimpleColorDialog::colorUpdated,
             this, &WritingArea::updateBackgroundColor);
+
+    connect(drawingToolsMenu.getPenColorDialog(), &SimpleColorDialog::colorUpdated,
+            this, &WritingArea::updatePenColor);
     
     connect(drawingToolsMenu.getZoomControlP(), &ZoomControl::zoomValueChanged,
             this, &WritingArea::updateZoom);
@@ -170,6 +173,10 @@ void WritingArea::updateDrawingToolsMenuPosition() {
     drawingToolsMenu.move(
         margin,
         this->height() - drawingToolsMenu.height() - margin);
+}
+
+void WritingArea::updatePenColor(QColor newColor) {
+    canvasPen.setColor(newColor);
 }
 
 inline std::pair<int, int> WritingArea::getCoordinates(QPointF point) {

@@ -12,6 +12,7 @@
 #include <QPushButton>
 #include <QDialog>
 #include <QGridLayout>
+#include <QFrame>
 
 #include <array>
 #include <vector>
@@ -22,7 +23,7 @@
 class SimpleColorDialog : public QDialog {
     Q_OBJECT
     public:
-        SimpleColorDialog(QWidget* parent = nullptr);
+        SimpleColorDialog(int startingColor = 0, QWidget* parent = nullptr);
         ~SimpleColorDialog();
         QColor getColor();
 
@@ -37,7 +38,7 @@ class SimpleColorDialog : public QDialog {
             QColor("#f20884"),QColor("#4600a5"),QColor("#0000d4"),QColor("#02abea"),
             QColor("#1fb714"),QColor("#006411"),QColor("#562c05"),QColor("#90713a"),
             QColor("#c0c0c0"),QColor("#808080"),QColor("#404040"),QColor("#000000")};
-        QColor pickedColor{colors16[nColors - 1]};
+        QColor pickedColor;
         QGridLayout colorGrid;
         std::array<QPushButton, nColors> colorButtons;
         void setColor(QColor newColor);
@@ -73,16 +74,22 @@ class DrawingToolsMenu : public QWidget {
         ~DrawingToolsMenu();
         ZoomControl* getZoomControlP();
         SimpleColorDialog* getBackgroundColorDialog();
+        SimpleColorDialog* getPenColorDialog();
 
     public slots:
         void updateBackgroundColorButton(QColor newColor);
+        void updatePenColorButton(QColor newColor);
 
     private:
         QVBoxLayout menuLayout;
+        QHBoxLayout colorControlsLayout;
         QPushButton backgroundColorButton;
         SimpleColorDialog backgroundColorDialog;
+        QPushButton penColorButton;
+        SimpleColorDialog penColorDialog;
         ZoomControl zoomControl;
         void startBackgroundColorDialog();
+        void startPenColorDialog();
 };
 
 struct LineSegment {
@@ -105,6 +112,7 @@ class WritingArea : public QWidget{
 
     public slots:
         void updateBackgroundColor(QColor newColor);
+        void updatePenColor(QColor newColor);
         void updateZoom(int newZoomValue);
 
     private:
