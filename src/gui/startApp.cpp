@@ -15,6 +15,7 @@ namespace gui_f {
         app.setFont(font);
 
         MainWindow window;
+        window.setMinimumSize(200, 200);
         window.showMaximized();
 
         return app.exec();

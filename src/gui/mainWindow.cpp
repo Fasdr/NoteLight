@@ -33,12 +33,16 @@ void MainWindow::configureFileMenu() {
     connect(&fileActions.actionNewFile, &QAction::triggered, this, &MainWindow::newFile);
     connect(&fileActions.actionOpenFile, &QAction::triggered, this, &MainWindow::openFile);
     connect(&fileActions.actionSaveFile, &QAction::triggered, this, &MainWindow::saveFile);
+    connect(&fileActions.actionExitApp, &QAction::triggered, this, &MainWindow::exitApp);
 
     auto fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addActions({
         &fileActions.actionNewFile,
         &fileActions.actionOpenFile,
         &fileActions.actionSaveFile});
+    fileMenu->addSeparator();
+    fileMenu->addActions({
+        &fileActions.actionExitApp});
 }
 
 void MainWindow::configureSettingsMenu() {
@@ -67,6 +71,10 @@ void MainWindow::openFile() {
 
 void MainWindow::saveFile() {
     std::cout << "TODO: save file" << std::endl;
+}
+
+void MainWindow::exitApp() {
+    qApp->exit();
 }
 
 void MainWindow::chooseFont() {

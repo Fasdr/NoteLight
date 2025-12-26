@@ -82,11 +82,13 @@ class DrawingToolsMenu : public QWidget {
 
     private:
         QVBoxLayout menuLayout;
-        QHBoxLayout colorControlsLayout;
+        QPushButton changeFullScreen;
+        QHBoxLayout drawingControlsLayout;
         QPushButton backgroundColorButton;
         SimpleColorDialog backgroundColorDialog;
         QPushButton penColorButton;
         SimpleColorDialog penColorDialog;
+        QPushButton penWidthButton;
         ZoomControl zoomControl;
         void startBackgroundColorDialog();
         void startPenColorDialog();
@@ -140,6 +142,7 @@ class FileActions : public QObject {
         QAction actionNewFile = QAction(tr("&New file"), nullptr);
         QAction actionOpenFile = QAction(tr("&Open file"), nullptr);
         QAction actionSaveFile = QAction(tr("&Save file"), nullptr);
+        QAction actionExitApp = QAction(tr("&Exit"), nullptr);
 
 };
 
@@ -166,6 +169,7 @@ class MainWindow : public QMainWindow {
         void newFile();
         void openFile();
         void saveFile();
+        void exitApp();
 
         SettingsActions settingsActions;
         void configureSettingsMenu();
