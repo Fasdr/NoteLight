@@ -24,13 +24,23 @@ class SimpleColorDialog : public QDialog {
     public:
         SimpleColorDialog(QWidget* parent = nullptr);
         ~SimpleColorDialog();
+        QColor getColor();
+
+    signals:
+        void colorUpdated(QColor newColor);
 
     private:
         static constexpr int nColors{16};
         static constexpr int nColumn{4};
-        QColor pickedColor{Qt::black};
+        std::array<QColor, nColors> colors16{
+            QColor("#ffffff"),QColor("#fcf305"),QColor("#ff6402"),QColor("#dd0806"),
+            QColor("#f20884"),QColor("#4600a5"),QColor("#0000d4"),QColor("#02abea"),
+            QColor("#1fb714"),QColor("#006411"),QColor("#562c05"),QColor("#90713a"),
+            QColor("#c0c0c0"),QColor("#808080"),QColor("#404040"),QColor("#000000")};
+        QColor pickedColor{colors16[nColors - 1]};
         QGridLayout colorGrid;
         std::array<QPushButton, nColors> colorButtons;
+        void setColor(QColor newColor);
 };
 
 class ZoomControl : public QWidget {
@@ -62,9 +72,10 @@ class DrawingToolsMenu : public QWidget {
         DrawingToolsMenu(QWidget* parent = nullptr);
         ~DrawingToolsMenu();
         ZoomControl* getZoomControlP();
-        
-    signals:
-        void requireBackgroundColor();
+        SimpleColorDialog* getBackgroundColorDialog();
+
+    public slots:
+        void updateBackgroundColorButton(QColor newColor);
 
     private:
         QVBoxLayout menuLayout;
@@ -93,7 +104,7 @@ class WritingArea : public QWidget{
         void resizeEvent(QResizeEvent *event) override;
 
     public slots:
-        void updateBackgroundColor();
+        void updateBackgroundColor(QColor newColor);
         void updateZoom(int newZoomValue);
 
     private:

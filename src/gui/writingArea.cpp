@@ -21,6 +21,9 @@ WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
 
     // connect(&drawingToolsMenu, &DrawingToolsMenu::requireBackgroundColor,
     //         this, &WritingArea::updateBackgroundColor);
+
+    connect(drawingToolsMenu.getBackgroundColorDialog(), &SimpleColorDialog::colorUpdated,
+            this, &WritingArea::updateBackgroundColor);
     
     connect(drawingToolsMenu.getZoomControlP(), &ZoomControl::zoomValueChanged,
             this, &WritingArea::updateZoom);
@@ -95,12 +98,9 @@ void WritingArea::paintEvent(QPaintEvent *event) {
     painter.drawPixmap(0, 0, canvasImage);
 }
 
-void WritingArea::updateBackgroundColor() {
-    QColor updatedBackgroundColor = QColorDialog::getColor(canvasBackgroundColor, this);
-    if (updatedBackgroundColor.isValid() && updatedBackgroundColor != canvasBackgroundColor) {
-        canvasBackgroundColor = updatedBackgroundColor;
-        recreateCanvas();
-    }
+void WritingArea::updateBackgroundColor(QColor newColor) {
+    canvasBackgroundColor = newColor;
+    recreateCanvas();
 }
 
 void WritingArea::updateZoom(int newZoomValue) {

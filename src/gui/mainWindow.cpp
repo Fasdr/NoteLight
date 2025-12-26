@@ -39,10 +39,6 @@ void MainWindow::configureFileMenu() {
         &fileActions.actionNewFile,
         &fileActions.actionOpenFile,
         &fileActions.actionSaveFile});
-
-    // auto extraStuff = menuBar()->addMenu(tr("&Extra"));
-    // QAction* actionExtra = new QAction(tr("&Extra"), this);
-    // extraStuff->addAction(actionExtra);
 }
 
 void MainWindow::configureSettingsMenu() {
