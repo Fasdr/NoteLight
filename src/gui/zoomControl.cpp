@@ -49,5 +49,7 @@ void ZoomControl::setZoomValue(int newZoomValue) {
     }
     zoomValue = newZoomValue;
     emit zoomValueChanged(newZoomValue);
-    zoomButton.setText(QString("🔍%1%").arg(zoomValue));
+    zoomButton.setText(QString("🔍%1%").arg(zoomValue, 3, 10, u' '));
+
+    
 }

@@ -10,9 +10,28 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QDialog>
+#include <QGridLayout>
 
+#include <array>
+#include <vector>
 #include <unordered_map>
 #include <utility>
+#include <array>
+
+class SimpleColorDialog : public QDialog {
+    Q_OBJECT
+    public:
+        SimpleColorDialog(QWidget* parent = nullptr);
+        ~SimpleColorDialog();
+
+    private:
+        static constexpr int nColors{16};
+        static constexpr int nColumn{4};
+        QColor pickedColor{Qt::black};
+        QGridLayout colorGrid;
+        std::array<QPushButton, nColors> colorButtons;
+};
 
 class ZoomControl : public QWidget {
     Q_OBJECT
@@ -50,7 +69,9 @@ class DrawingToolsMenu : public QWidget {
     private:
         QVBoxLayout menuLayout;
         QPushButton backgroundColorButton;
+        SimpleColorDialog backgroundColorDialog;
         ZoomControl zoomControl;
+        void startBackgroundColorDialog();
 };
 
 struct LineSegment {

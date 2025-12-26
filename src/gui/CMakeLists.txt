@@ -19,6 +19,7 @@ qt_add_library(guiInternal
     writingArea.cpp
     drawingToolsMenu.cpp
     zoomControl.cpp
+    simpleColorDialog.cpp
 )
 
 target_sources(guiInternal

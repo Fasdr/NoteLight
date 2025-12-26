@@ -19,24 +19,11 @@ WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
     
     canvasImage.fill(canvasBackgroundColor);
 
-    connect(&drawingToolsMenu, &DrawingToolsMenu::requireBackgroundColor,
-            this, &WritingArea::updateBackgroundColor);
+    // connect(&drawingToolsMenu, &DrawingToolsMenu::requireBackgroundColor,
+    //         this, &WritingArea::updateBackgroundColor);
     
     connect(drawingToolsMenu.getZoomControlP(), &ZoomControl::zoomValueChanged,
             this, &WritingArea::updateZoom);
-
-    // std::cout << QGuiApplication::primaryScreen()->geometry().width() << std::endl;
-    // std::cout << QGuiApplication::primaryScreen()->geometry().height() << std::endl;
-    // std::cout << QGuiApplication::primaryScreen()->devicePixelRatio() << std::endl;
-    // std::cout << devicePixelRatio() << std::endl;
-    // std::cout << devicePixelRatioF() << std::endl;
-    
-
-    // QPainter canvasPainter(&canvasImage);
-    // canvasPainter.setRenderHint(QPainter::Antialiasing, true);
-    // QPen canvasPen(Qt::white, 4.0);
-    // canvasPainter.setPen(canvasPen);
-    // canvasPainter.drawLine(0, 0, QGuiApplication::primaryScreen()->geometry().width() / 2, 200);
     
     canvasPen = QPen(Qt::white, 4.0);
 }
@@ -64,12 +51,6 @@ void WritingArea::tabletEvent(QTabletEvent *event) {
         default:
             return;
     }
-
-
-    // std::cout << "Event type: " << event->type() << std::endl;
-    // std::cout << std::format("x: {}, y: {}, rx: {}, ry: {}",
-    //     point.x(), point.y(), point.rx(), point.ry()) << std::endl;
-    // if (event->type)
 }
 
 int WritingArea::processSegment(QPointF startPoint, QPointF endPoint) {
@@ -110,11 +91,8 @@ int WritingArea::processSegment(QPointF startPoint, QPointF endPoint) {
 // }
 
 void WritingArea::paintEvent(QPaintEvent *event) {
-    // canvasImage = QPixmap(this->geometry().width(), this->geometry().height());
-    // canvasImage.fill(qRgb(0, 0, 0));
     QPainter painter(this);
     painter.drawPixmap(0, 0, canvasImage);
-    // std::cout << "W: " << this->geometry().width() << " H: " << this->geometry().height() << std::endl;
 }
 
 void WritingArea::updateBackgroundColor() {
