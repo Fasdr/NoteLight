@@ -116,9 +116,9 @@ int WritingArea::recreateCanvas() {
     canvasImage.fill(canvasBackgroundColor);
 
     QPointF startCorner{xOrigin, yOrigin};
-    QPointF endCorner = startCorner + zoom * QPointF{
+    QPointF endCorner = startCorner + QPointF{
         static_cast<double>(this->geometry().width()),
-        static_cast<double>(this->geometry().height())};
+        static_cast<double>(this->geometry().height())} / zoom;
 
     auto [si, sj] = getCoordinates(startCorner);
     auto [ei, ej] = getCoordinates(endCorner);
