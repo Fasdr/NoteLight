@@ -5,14 +5,14 @@
 
 DrawingToolsMenu::DrawingToolsMenu(QWidget* parent) : QWidget(parent),
             menuLayout(this),
-            changeFullScreen("⛶", this),
+            changeFullScreenButton("⛶", this),
             backgroundColorButton("🌆", this),
             backgroundColorDialog(15, this),
             penColorButton("🎨", this),
             penColorDialog(0, this),
             penWidthButton("✒️", this) {
 
-    menuLayout.addWidget(&changeFullScreen);
+    menuLayout.addWidget(&changeFullScreenButton);
 
     menuLayout.addLayout(&drawingControlsLayout);
     
@@ -49,6 +49,11 @@ DrawingToolsMenu::DrawingToolsMenu(QWidget* parent) : QWidget(parent),
 DrawingToolsMenu::~DrawingToolsMenu() {
 
 }
+
+QPushButton* DrawingToolsMenu::getChangeFullScreenButton() {
+    return &changeFullScreenButton;
+}
+
 
 void DrawingToolsMenu::startBackgroundColorDialog() {
     backgroundColorDialog.show();

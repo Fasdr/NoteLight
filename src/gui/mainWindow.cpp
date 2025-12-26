@@ -6,6 +6,9 @@
 #include <QMessageBox>
 
 #include <iostream>
+#include <chrono>
+#include <iostream>
+#include <thread>
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent),
         appSettings("./appSettings.ini", QSettings::IniFormat),
@@ -14,6 +17,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent),
     loadSettings();
     configureFileMenu();
     configureSettingsMenu();
+
+    connect(writingArea.getDrawingToolsMenu()->getChangeFullScreenButton(), &QPushButton::clicked,
+            this, &MainWindow::changeFullScreen);
+
     setCentralWidget(&writingArea);
 }
 
@@ -103,5 +110,20 @@ void MainWindow::setDefault() {
     if (response == QMessageBox::Yes) {
         appSettings.clear();
         loadSettings();
+    }
+}
+
+void MainWindow::changeFullScreen() {
+    if (isFullScreen()) {
+        setMinimumSize(QGuiApplication::primaryScreen()->availableGeometry().size().width(),
+                        QGuiApplication::primaryScreen()->availableGeometry().size().height() * 0.975);
+        move(0, 0);
+        setWindowState(Qt::WindowMaximized);
+    } else {
+        setMinimumSize(QGuiApplication::primaryScreen()->availableGeometry().size().width(),
+                        QGuiApplication::primaryScreen()->availableGeometry().size().height() * 0.975);
+        // setMinimumSize(QGuiApplication::primaryScreen()->availableGeometry().size());
+        move(0, 0);
+        setWindowState(Qt::WindowFullScreen);
     }
 }

@@ -35,7 +35,11 @@ WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
 }
 
 WritingArea::~WritingArea() {
+    
+}
 
+DrawingToolsMenu* WritingArea::getDrawingToolsMenu() {
+    return &drawingToolsMenu;
 }
 
 void WritingArea::tabletEvent(QTabletEvent *event) {

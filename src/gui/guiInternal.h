@@ -76,13 +76,15 @@ class DrawingToolsMenu : public QWidget {
         SimpleColorDialog* getBackgroundColorDialog();
         SimpleColorDialog* getPenColorDialog();
 
+        QPushButton* getChangeFullScreenButton();
+
     public slots:
         void updateBackgroundColorButton(QColor newColor);
         void updatePenColorButton(QColor newColor);
 
     private:
         QVBoxLayout menuLayout;
-        QPushButton changeFullScreen;
+        QPushButton changeFullScreenButton;
         QHBoxLayout drawingControlsLayout;
         QPushButton backgroundColorButton;
         SimpleColorDialog backgroundColorDialog;
@@ -105,6 +107,7 @@ class WritingArea : public QWidget{
     public:
         WritingArea(QWidget* parent = nullptr);
         ~WritingArea();
+        DrawingToolsMenu* getDrawingToolsMenu();
 
     protected:
         // void mousePressEvent(QMouseEvent *event) override;
@@ -178,4 +181,6 @@ class MainWindow : public QMainWindow {
         void setDefault();
 
         WritingArea writingArea;
+
+        void changeFullScreen();
 };
