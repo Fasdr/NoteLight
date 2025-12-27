@@ -12,7 +12,7 @@ DrawingToolsMenu::DrawingToolsMenu(QWidget* parent) : QWidget(parent),
             penColorDialog(0, this),
             // penWidthButton("✒️", this),
             penWidthButtonLabel("✒️"),
-            penWidthDialog(1, 24, 1, this),
+            penWidthDialog(this),
             zoomControl(this) {
 
     menuLayout.addWidget(&changeFullScreenButton);

@@ -22,14 +22,16 @@
 #include <utility>
 #include <array>
 
-class SimpleSliderDialog : public QDialog {
+class PenWidthSliderDialog : public QDialog {
     Q_OBJECT
     public:
-        SimpleSliderDialog(int minVal, int maxVal, int step, QWidget* parent = nullptr);
-        ~SimpleSliderDialog();
+        PenWidthSliderDialog(QWidget* parent = nullptr);
+        ~PenWidthSliderDialog();
 
     private:
+        QHBoxLayout sliderLayout;
         QSlider sliderControl;
+        QLabel valueLabel;
 };
 
 class SimpleColorDialog : public QDialog {
@@ -109,7 +111,7 @@ class DrawingToolsMenu : public QWidget {
         QPushButton penWidthButton;
         QVBoxLayout penWidthButtonLayout;
         QLabel penWidthButtonLabel;
-        SimpleSliderDialog penWidthDialog;
+        PenWidthSliderDialog penWidthDialog;
         ZoomControl zoomControl;
         void startBackgroundColorDialog();
         void startPenColorDialog();
