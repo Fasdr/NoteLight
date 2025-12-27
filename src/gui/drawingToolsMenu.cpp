@@ -2,34 +2,64 @@
 #include <QLineEdit>
 
 
-
 DrawingToolsMenu::DrawingToolsMenu(QWidget* parent) : QWidget(parent),
             menuLayout(this),
             changeFullScreenButton("⛶", this),
-            backgroundColorButton("🌆", this),
+            // backgroundColorButton("🌆", this),
+            backgroundColorButtonLabel("🛤️"),
             backgroundColorDialog(15, this),
-            penColorButton("🎨", this),
+            // penColorButton("🎨", this),
+            penColorButtonLabel("🎨"),
             penColorDialog(0, this),
-            penWidthButton("✒️", this) {
+            // penWidthButton("✒️", this),
+            penWidthButtonLabel("✒️"),
+            zoomControl(this) {
 
     menuLayout.addWidget(&changeFullScreenButton);
 
     menuLayout.addLayout(&drawingControlsLayout);
     
     QPalette pal;
+
+    // drawingControlsLayout.addWidget(&backgroundColorButton);
+    // pal = backgroundColorButton.palette();
+    // pal.setColor(QPalette::Button, backgroundColorDialog.getColor());
+    // backgroundColorButton.setAutoFillBackground(true);
+    // backgroundColorButton.setPalette(pal);
+
     drawingControlsLayout.addWidget(&backgroundColorButton);
-    pal = backgroundColorButton.palette();
-    pal.setColor(QPalette::Button, backgroundColorDialog.getColor());
-    backgroundColorButton.setAutoFillBackground(true);
-    backgroundColorButton.setPalette(pal);
+
+    backgroundColorButton.setLayout(&backgroundColorButtonLayout);
+    backgroundColorButtonLayout.addWidget(&backgroundColorButtonLabel);
+    backgroundColorButtonLayout.setAlignment(Qt::AlignCenter);
+    
+    backgroundColorButtonLabel.setMargin(5);
+    pal = backgroundColorButtonLabel.palette();
+    pal.setColor(QPalette::Window, backgroundColorDialog.getColor());
+    backgroundColorButtonLabel.setAutoFillBackground(true);
+    backgroundColorButtonLabel.setBackgroundRole(QPalette::Window);
+    backgroundColorButtonLabel.setPalette(pal);
 
     drawingControlsLayout.addWidget(&penColorButton);
-    pal = penColorButton.palette();
-    pal.setColor(QPalette::Button, penColorDialog.getColor());
-    penColorButton.setAutoFillBackground(true);
-    penColorButton.setPalette(pal);
+
+    penColorButton.setLayout(&penColorButtonLayout);
+    penColorButtonLayout.addWidget(&penColorButtonLabel);
+    penColorButtonLayout.setAlignment(Qt::AlignCenter);
+    
+    penColorButtonLabel.setMargin(5);
+    pal = penColorButtonLabel.palette();
+    pal.setColor(QPalette::Window, penColorDialog.getColor());
+    penColorButtonLabel.setAutoFillBackground(true);
+    penColorButtonLabel.setBackgroundRole(QPalette::Window);
+    penColorButtonLabel.setPalette(pal);
 
     drawingControlsLayout.addWidget(&penWidthButton);
+
+    penWidthButton.setLayout(&penWidthButtonLayout);
+    penWidthButtonLayout.addWidget(&penWidthButtonLabel);
+    penWidthButtonLayout.setAlignment(Qt::AlignCenter);
+
+    penWidthButtonLabel.setMargin(5);
 
     connect(&backgroundColorButton, &QPushButton::clicked,
         this, &DrawingToolsMenu::startBackgroundColorDialog);
@@ -77,16 +107,18 @@ SimpleColorDialog* DrawingToolsMenu::getPenColorDialog() {
 }
 
 void DrawingToolsMenu::updateBackgroundColorButton(QColor newColor) {
-    QPalette pal = backgroundColorButton.palette();
-    pal.setColor(QPalette::Button, newColor);
-    backgroundColorButton.setAutoFillBackground(true);
-    backgroundColorButton.setPalette(pal);
+    QPalette pal = backgroundColorButtonLabel.palette();
+    pal.setColor(QPalette::Window, backgroundColorDialog.getColor());
+    backgroundColorButtonLabel.setAutoFillBackground(true);
+    backgroundColorButtonLabel.setBackgroundRole(QPalette::Window);
+    backgroundColorButtonLabel.setPalette(pal);
 }
 
 void DrawingToolsMenu::updatePenColorButton(QColor newColor) {
-    QPalette pal = penColorButton.palette();
-    pal.setColor(QPalette::Button, newColor);
-    penColorButton.setAutoFillBackground(true);
-    penColorButton.setPalette(pal);
+    QPalette pal = penColorButtonLabel.palette();
+    pal.setColor(QPalette::Window, penColorDialog.getColor());
+    penColorButtonLabel.setAutoFillBackground(true);
+    penColorButtonLabel.setBackgroundRole(QPalette::Window);
+    penColorButtonLabel.setPalette(pal);
 }
 

@@ -13,6 +13,7 @@
 #include <QDialog>
 #include <QGridLayout>
 #include <QFrame>
+#include <QLabel>
 
 #include <array>
 #include <vector>
@@ -87,10 +88,16 @@ class DrawingToolsMenu : public QWidget {
         QPushButton changeFullScreenButton;
         QHBoxLayout drawingControlsLayout;
         QPushButton backgroundColorButton;
+        QVBoxLayout backgroundColorButtonLayout;
+        QLabel backgroundColorButtonLabel;
         SimpleColorDialog backgroundColorDialog;
         QPushButton penColorButton;
+        QVBoxLayout penColorButtonLayout;
+        QLabel penColorButtonLabel;
         SimpleColorDialog penColorDialog;
         QPushButton penWidthButton;
+        QVBoxLayout penWidthButtonLayout;
+        QLabel penWidthButtonLabel;
         ZoomControl zoomControl;
         void startBackgroundColorDialog();
         void startPenColorDialog();
