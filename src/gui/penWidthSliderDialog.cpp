@@ -8,12 +8,12 @@ PenWidthSliderDialog::PenWidthSliderDialog(QWidget* parent) : QDialog(parent),
     sliderControl.setSingleStep(1);
     sliderControl.setPageStep(1);
     sliderControl.setTickInterval(1);
-    sliderControl.setValue(4);
+    sliderControl.setValue(penWidth);
     
     QString sliderStyle = R"(
         /* 0. Main Widget Settings */
         QSlider:horizontal {
-            min-width: 500px;
+            min-width: 700px;
             min-height: 80px;   /* Increased height to make room for Ticks below */
         }
 
@@ -68,8 +68,19 @@ PenWidthSliderDialog::PenWidthSliderDialog(QWidget* parent) : QDialog(parent),
 
     sliderLayout.addWidget(&sliderControl);
     sliderLayout.addWidget(&valueLabel);
+    connect(&sliderControl, &QSlider::valueChanged,
+        this, &PenWidthSliderDialog::penWidthSliderMoved);
+
+    connect(&sliderControl, &QSlider::sliderReleased,
+        this, [this]() { this->accept(); });
 }
 
 PenWidthSliderDialog::~PenWidthSliderDialog() {
     
+}
+
+void PenWidthSliderDialog::penWidthSliderMoved(int newWidth) {
+    penWidth = newWidth;
+    valueLabel.setText(QString("%1\n𓂃✍︎").arg(newWidth, 2, 10, u' '));
+    emit penWidthChanged(newWidth);
 }

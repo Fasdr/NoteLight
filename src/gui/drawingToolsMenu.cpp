@@ -115,6 +115,11 @@ SimpleColorDialog* DrawingToolsMenu::getPenColorDialog() {
     return &penColorDialog;
 }
 
+PenWidthSliderDialog* DrawingToolsMenu::getPenWidthSliderDialog() {
+    return &penWidthDialog;
+}
+
+
 void DrawingToolsMenu::updateBackgroundColorButton(QColor newColor) {
     QPalette pal = backgroundColorButtonLabel.palette();
     pal.setColor(QPalette::Window, backgroundColorDialog.getColor());

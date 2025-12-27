@@ -28,7 +28,14 @@ class PenWidthSliderDialog : public QDialog {
         PenWidthSliderDialog(QWidget* parent = nullptr);
         ~PenWidthSliderDialog();
 
+    public slots:
+        void penWidthSliderMoved(int newWidth);
+
+    signals:
+        void penWidthChanged(int newWidth);
+
     private:
+        int penWidth{4};
         QHBoxLayout sliderLayout;
         QSlider sliderControl;
         QLabel valueLabel;
@@ -89,6 +96,7 @@ class DrawingToolsMenu : public QWidget {
         ZoomControl* getZoomControl();
         SimpleColorDialog* getBackgroundColorDialog();
         SimpleColorDialog* getPenColorDialog();
+        PenWidthSliderDialog* getPenWidthSliderDialog();
 
         QPushButton* getChangeFullScreenButton();
 
@@ -140,6 +148,7 @@ class WritingArea : public QWidget{
     public slots:
         void updateBackgroundColor(QColor newColor);
         void updatePenColor(QColor newColor);
+        void updatePenWidth(int newWidth);
         void updateZoom(int newZoomValue);
 
     private:

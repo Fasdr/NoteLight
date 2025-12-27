@@ -19,6 +19,8 @@ WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
     
     canvasImage.fill(canvasBackgroundColor);
 
+    canvasPen = QPen(Qt::white, 4.0);
+
     // connect(&drawingToolsMenu, &DrawingToolsMenu::requireBackgroundColor,
     //         this, &WritingArea::updateBackgroundColor);
 
@@ -27,11 +29,12 @@ WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
 
     connect(drawingToolsMenu.getPenColorDialog(), &SimpleColorDialog::colorUpdated,
             this, &WritingArea::updatePenColor);
+
+    connect(drawingToolsMenu.getPenWidthSliderDialog(), &PenWidthSliderDialog::penWidthChanged,
+            this, &WritingArea::updatePenWidth);
     
     connect(drawingToolsMenu.getZoomControl(), &ZoomControl::zoomValueChanged,
             this, &WritingArea::updateZoom);
-    
-    canvasPen = QPen(Qt::white, 4.0);
 }
 
 WritingArea::~WritingArea() {
@@ -108,6 +111,10 @@ void WritingArea::paintEvent(QPaintEvent *event) {
 void WritingArea::updateBackgroundColor(QColor newColor) {
     canvasBackgroundColor = newColor;
     recreateCanvas();
+}
+
+void WritingArea::updatePenWidth(int newWidth) {
+    canvasPen.setWidth(newWidth);   
 }
 
 void WritingArea::updateZoom(int newZoomValue) {
