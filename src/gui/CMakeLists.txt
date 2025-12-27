@@ -20,6 +20,7 @@ qt_add_library(guiInternal
     drawingToolsMenu.cpp
     zoomControl.cpp
     simpleColorDialog.cpp
+    simpleSliderDialog.cpp
 )
 
 target_sources(guiInternal

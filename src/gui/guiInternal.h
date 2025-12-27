@@ -14,12 +14,23 @@
 #include <QGridLayout>
 #include <QFrame>
 #include <QLabel>
+#include <QSlider>
 
 #include <array>
 #include <vector>
 #include <unordered_map>
 #include <utility>
 #include <array>
+
+class SimpleSliderDialog : public QDialog {
+    Q_OBJECT
+    public:
+        SimpleSliderDialog(int minVal, int maxVal, int step, QWidget* parent = nullptr);
+        ~SimpleSliderDialog();
+
+    private:
+        QSlider sliderControl;
+};
 
 class SimpleColorDialog : public QDialog {
     Q_OBJECT
@@ -73,7 +84,7 @@ class DrawingToolsMenu : public QWidget {
     public:
         DrawingToolsMenu(QWidget* parent = nullptr);
         ~DrawingToolsMenu();
-        ZoomControl* getZoomControlP();
+        ZoomControl* getZoomControl();
         SimpleColorDialog* getBackgroundColorDialog();
         SimpleColorDialog* getPenColorDialog();
 
@@ -98,9 +109,11 @@ class DrawingToolsMenu : public QWidget {
         QPushButton penWidthButton;
         QVBoxLayout penWidthButtonLayout;
         QLabel penWidthButtonLabel;
+        SimpleSliderDialog penWidthDialog;
         ZoomControl zoomControl;
         void startBackgroundColorDialog();
         void startPenColorDialog();
+        void startPenWidthDialog();
 };
 
 struct LineSegment {

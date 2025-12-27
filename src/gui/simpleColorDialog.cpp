@@ -1,6 +1,5 @@
 #include <guiInternal.h>
 
-
 SimpleColorDialog::SimpleColorDialog(int startingColor, QWidget* parent) : QDialog(parent),
     pickedColor(colors16[startingColor]), colorGrid(this) {
     for (int i{0}; i < nColors; ++i) {

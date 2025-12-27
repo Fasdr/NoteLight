@@ -1,7 +1,6 @@
 #include <guiInternal.h>
 #include <QLineEdit>
 
-
 DrawingToolsMenu::DrawingToolsMenu(QWidget* parent) : QWidget(parent),
             menuLayout(this),
             changeFullScreenButton("⛶", this),
@@ -13,6 +12,7 @@ DrawingToolsMenu::DrawingToolsMenu(QWidget* parent) : QWidget(parent),
             penColorDialog(0, this),
             // penWidthButton("✒️", this),
             penWidthButtonLabel("✒️"),
+            penWidthDialog(1, 24, 1, this),
             zoomControl(this) {
 
     menuLayout.addWidget(&changeFullScreenButton);
@@ -72,6 +72,11 @@ DrawingToolsMenu::DrawingToolsMenu(QWidget* parent) : QWidget(parent),
 
     connect(&penColorDialog, &SimpleColorDialog::colorUpdated,
         this, &DrawingToolsMenu::updatePenColorButton);
+
+    connect(&penWidthButton, &QPushButton::clicked,
+        this, &DrawingToolsMenu::startPenWidthDialog);
+
+    
     
     menuLayout.addWidget(&zoomControl);
 }
@@ -93,8 +98,12 @@ void DrawingToolsMenu::startPenColorDialog() {
     penColorDialog.show();
 }
 
+void DrawingToolsMenu::startPenWidthDialog() {
+    penWidthDialog.show();
+}
 
-ZoomControl* DrawingToolsMenu::getZoomControlP() {
+
+ZoomControl* DrawingToolsMenu::getZoomControl() {
     return &zoomControl;
 }
 

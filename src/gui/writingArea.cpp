@@ -28,7 +28,7 @@ WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
     connect(drawingToolsMenu.getPenColorDialog(), &SimpleColorDialog::colorUpdated,
             this, &WritingArea::updatePenColor);
     
-    connect(drawingToolsMenu.getZoomControlP(), &ZoomControl::zoomValueChanged,
+    connect(drawingToolsMenu.getZoomControl(), &ZoomControl::zoomValueChanged,
             this, &WritingArea::updateZoom);
     
     canvasPen = QPen(Qt::white, 4.0);
