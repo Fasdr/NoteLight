@@ -1,4 +1,6 @@
 # CMake
 build/
+# IDE files
+.cache/
 # Settings for the app
 appSettings.ini
