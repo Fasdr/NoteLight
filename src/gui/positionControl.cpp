@@ -27,32 +27,26 @@ PositionControl::~PositionControl() {
 }
 
 #include <iostream>
+#include <format>
 bool PositionControl::event(QEvent *event) {
     switch (event->type()) {
         case QEvent::TouchBegin:
-        {
-            std::cout << "TouchBegin" << std::endl;
-            QTouchEvent* touch = static_cast<QTouchEvent*>(event);
-            std::cout << touch->points().size() << std::endl;
             break;
-        }
         case QEvent::TouchUpdate:
-        {
-            std::cout << "TouchUpdate" << std::endl;
-            QTouchEvent* touch = static_cast<QTouchEvent*>(event);
-            std::cout << touch->points().size() << std::endl;
             break;
-        }
         case QEvent::TouchEnd:
-        {
-            std::cout << "TouchEnd" << std::endl;
-            QTouchEvent* touch = static_cast<QTouchEvent*>(event);
-            std::cout << touch->points().size() << std::endl;
             break;
-        }
         default:
             return QWidget::event(event);
     }
+    QTouchEvent* touch = static_cast<QTouchEvent*>(event);
+    std::cout << std::format("({}, {}), ({}, {})",
+        rect().topLeft().x(), rect().topLeft().y(),
+        rect().bottomRight().x(), rect().bottomRight().y()) << std::endl;
+    std::cout << "Id: " << touch->points()[0].id() << std::endl;
+    std::cout << "x: " << touch->points()[0].position().x() << " y: " << touch->points()[0].position().y() << std::endl;
+
+
     event->accept();
     return true;
 }

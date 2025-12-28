@@ -34,6 +34,8 @@ class PositionControl : public QWidget {
     private:
         QGridLayout gridLayout;
         std::array<QLabel, 9> directionLabels;
+        bool scrolling{false};
+        int fingerId{-1};
 };
 
 class PenWidthSliderDialog : public QDialog {
