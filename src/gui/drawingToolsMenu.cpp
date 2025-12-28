@@ -104,6 +104,9 @@ void DrawingToolsMenu::startPenWidthDialog() {
     penWidthDialog.show();
 }
 
+PositionControl* DrawingToolsMenu::getPositionControl() {
+    return &positionControl;
+}
 
 ZoomControl* DrawingToolsMenu::getZoomControl() {
     return &zoomControl;

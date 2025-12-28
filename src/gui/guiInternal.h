@@ -31,11 +31,17 @@ class PositionControl : public QWidget {
     protected:
         bool event(QEvent *event) override;
 
+    signals:
+        void scrollRequested(QPointF delta);
+
     private:
         QGridLayout gridLayout;
         std::array<QLabel, 9> directionLabels;
         bool scrolling{false};
         int fingerId{-1};
+        QPointF previousPoint;
+        double traveledDistance{0};
+        QPointF applyAcceleration(QPointF newPoint);
 };
 
 class PenWidthSliderDialog : public QDialog {
@@ -109,6 +115,7 @@ class DrawingToolsMenu : public QWidget {
     public:
         DrawingToolsMenu(QWidget* parent = nullptr);
         ~DrawingToolsMenu();
+        PositionControl* getPositionControl();
         ZoomControl* getZoomControl();
         SimpleColorDialog* getBackgroundColorDialog();
         SimpleColorDialog* getPenColorDialog();
@@ -163,6 +170,7 @@ class WritingArea : public QWidget{
         void resizeEvent(QResizeEvent *event) override;
 
     public slots:
+        void updateScroll(QPointF delta);
         void updateBackgroundColor(QColor newColor);
         void updatePenColor(QColor newColor);
         void updatePenWidth(int newWidth);

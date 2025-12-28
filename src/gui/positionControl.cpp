@@ -1,8 +1,10 @@
 #include <guiInternal.h>
 #include <QTouchEvent>
 
+#include <cmath>
+
 PositionControl::PositionControl(QWidget* parent) : QWidget(parent),
-        gridLayout(this) {
+        gridLayout(this)  {
     setAttribute(Qt::WA_AcceptTouchEvents, true);
     // std::array<QString, 9> directionElements = {
     //     "↖️", "⬆️", "↗️",
@@ -17,7 +19,6 @@ PositionControl::PositionControl(QWidget* parent) : QWidget(parent),
         directionLabels[i].setFixedSize(80, 80);
         directionLabels[i].setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
         directionLabels[i].setAlignment(Qt::AlignCenter);
-        directionLabels[i].setAttribute(Qt::WA_TransparentForMouseEvents, true);
         gridLayout.addWidget(&directionLabels[i], i / 3, i % 3);
     }
     for (int i{0}; i < 9; ++i) {
@@ -54,7 +55,8 @@ bool PositionControl::event(QEvent *event) {
         for (const QTouchEvent::TouchPoint& touchPoint : touchEvent->points()) {
             if (touchPoint.id() == fingerId && rect().contains(touchPoint.position().toPoint())) {
                 keepScrolling = true;
-                std::cout << "Working with the same finger, do something!" << std::endl;
+                emit scrollRequested(applyAcceleration(touchPoint.position()));
+                previousPoint = touchPoint.position();
                 break;
             }
         }
@@ -68,13 +70,19 @@ bool PositionControl::event(QEvent *event) {
             if (rect().contains(touchPoint.position().toPoint())) {
                 scrolling = true;
                 fingerId = touchPoint.id();
-                std::cout << "Recognized a finger to follow!" << std::endl;
-                std::cout << "x: " << touchPoint.position().x() << " y: " << touchPoint.position().y() << std::endl;
+                previousPoint = touchPoint.position();
+                traveledDistance = 0.0;
                 break;
             }
         }
     }
-    
     event->accept();
     return true;
+}
+
+QPointF PositionControl::applyAcceleration(QPointF newPoint) {
+    QPointF delta(newPoint - previousPoint);
+    traveledDistance += std::pow(delta.x(), 2) + std::pow(delta.y(), 2);
+
+    return delta * traveledDistance;
 }

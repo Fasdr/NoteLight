@@ -24,6 +24,9 @@ WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
     // connect(&drawingToolsMenu, &DrawingToolsMenu::requireBackgroundColor,
     //         this, &WritingArea::updateBackgroundColor);
 
+    connect(drawingToolsMenu.getPositionControl(), &PositionControl::scrollRequested,
+            this, &WritingArea::updateScroll);
+
     connect(drawingToolsMenu.getBackgroundColorDialog(), &SimpleColorDialog::colorUpdated,
             this, &WritingArea::updateBackgroundColor);
 
@@ -106,6 +109,10 @@ int WritingArea::processSegment(QPointF startPoint, QPointF endPoint) {
 void WritingArea::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     painter.drawPixmap(0, 0, canvasImage);
+}
+
+void WritingArea::updateScroll(QPointF delta) {
+    std::cout << "Move the canvas!" << std::endl;    
 }
 
 void WritingArea::updateBackgroundColor(QColor newColor) {
