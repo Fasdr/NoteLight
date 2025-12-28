@@ -3,6 +3,7 @@
 
 DrawingToolsMenu::DrawingToolsMenu(QWidget* parent) : QWidget(parent),
             menuLayout(this),
+            positionControl(this),
             changeFullScreenButton("⛶", this),
             // backgroundColorButton("🌆", this),
             backgroundColorButtonLabel("🛤️"),
@@ -14,7 +15,8 @@ DrawingToolsMenu::DrawingToolsMenu(QWidget* parent) : QWidget(parent),
             penWidthButtonLabel("✒️"),
             penWidthDialog(this),
             zoomControl(this) {
-
+    
+    menuLayout.addWidget(&positionControl, 0, Qt::AlignCenter);
     menuLayout.addWidget(&changeFullScreenButton);
 
     menuLayout.addLayout(&drawingControlsLayout);

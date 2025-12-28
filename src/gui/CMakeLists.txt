@@ -21,6 +21,7 @@ qt_add_library(guiInternal
     zoomControl.cpp
     simpleColorDialog.cpp
     penWidthSliderDialog.cpp
+    positionControl.cpp
 )
 
 target_sources(guiInternal

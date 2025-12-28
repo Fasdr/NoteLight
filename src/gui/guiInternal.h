@@ -22,6 +22,17 @@
 #include <utility>
 #include <array>
 
+class PositionControl : public QWidget {
+    Q_OBJECT
+    public:
+        PositionControl(QWidget* parent = nullptr);
+        ~PositionControl();
+
+    private:
+        QGridLayout gridLayout;
+        std::array<QLabel, 9> directionLabels;
+};
+
 class PenWidthSliderDialog : public QDialog {
     Q_OBJECT
     public:
@@ -106,6 +117,7 @@ class DrawingToolsMenu : public QWidget {
 
     private:
         QVBoxLayout menuLayout;
+        PositionControl positionControl;
         QPushButton changeFullScreenButton;
         QHBoxLayout drawingControlsLayout;
         QPushButton backgroundColorButton;
