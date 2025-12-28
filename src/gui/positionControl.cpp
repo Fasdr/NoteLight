@@ -64,7 +64,8 @@ bool PositionControl::event(QEvent *event) {
         }
     } else {
         for (const auto& touchPoint : touchEvent->points()) {
-            if (touchPoint.state() == QEventPoint::Pressed && rect().contains(touchPoint.position().toPoint())) {
+            // if (touchPoint.state() == QEventPoint::Pressed && rect().contains(touchPoint.position().toPoint())) {
+            if (rect().contains(touchPoint.position().toPoint())) {
                 scrolling = true;
                 fingerId = touchPoint.id();
                 std::cout << "Recognized a finger to follow!" << std::endl;
