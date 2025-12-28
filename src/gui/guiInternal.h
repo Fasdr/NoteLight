@@ -28,6 +28,9 @@ class PositionControl : public QWidget {
         PositionControl(QWidget* parent = nullptr);
         ~PositionControl();
 
+    protected:
+        bool event(QEvent *event) override;
+
     private:
         QGridLayout gridLayout;
         std::array<QLabel, 9> directionLabels;

@@ -1,7 +1,9 @@
 #include <guiInternal.h>
+#include <QTouchEvent>
 
 PositionControl::PositionControl(QWidget* parent) : QWidget(parent),
         gridLayout(this) {
+    setAttribute(Qt::WA_AcceptTouchEvents, true);
     std::array<QString, 9> directionElements = {
         "↖️", "⬆️", "↗️",
         "⬅️", "🔃", "➡️",
@@ -22,4 +24,23 @@ PositionControl::PositionControl(QWidget* parent) : QWidget(parent),
 
 PositionControl::~PositionControl() {
 
+}
+
+#include <iostream>
+bool PositionControl::event(QEvent *event) {
+    switch (event->type()) {
+        case QEvent::TouchBegin:
+            std::cout << "TouchBegin" << std::endl;
+            break;
+        case QEvent::TouchUpdate:
+            std::cout << "TouchUpdate" << std::endl;
+            break;
+        case QEvent::TouchEnd:
+            std::cout << "TouchEnd" << std::endl;
+            break;
+        default:
+            return QWidget::event(event);
+    }
+    event->accept();
+    return true;
 }
