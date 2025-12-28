@@ -45,11 +45,6 @@ bool PositionControl::event(QEvent *event) {
             return QWidget::event(event);
     }
     QTouchEvent* touchEvent = static_cast<QTouchEvent*>(event);
-    // std::cout << std::format("({}, {}), ({}, {})",
-    //     rect().topLeft().x(), rect().topLeft().y(),
-    //     rect().bottomRight().x(), rect().bottomRight().y()) << std::endl;
-    // std::cout << "Id: " << touch->points()[0].id() << std::endl;
-    // std::cout << "x: " << touch->points()[0].position().x() << " y: " << touch->points()[0].position().y() << std::endl;
     bool keepScrolling{false};
     if (scrolling) {
         for (const QTouchEvent::TouchPoint& touchPoint : touchEvent->points()) {
@@ -80,10 +75,14 @@ bool PositionControl::event(QEvent *event) {
     return true;
 }
 
+#include <iostream>
 QPointF PositionControl::applyAcceleration(QPointF newPoint) {
     QPointF delta(newPoint - previousPoint);
     traveledDistance += std::pow(std::pow(delta.x(), 2) + std::pow(delta.y(), 2), 0.5);
+    std::cout << "Travel Distance now: " << traveledDistance << std::endl;
+    std::cout << "X size: " << rect().x() << std::endl;
     double prop = traveledDistance / rect().x();
+    std::cout << "Res. prop.: " << prop << std::endl;
     if (prop < 0.25) {
         return delta * prop;
     } else if (prop < 0.5) {
@@ -91,6 +90,4 @@ QPointF PositionControl::applyAcceleration(QPointF newPoint) {
     } else {
         return delta * (16 * prop - 7);
     }
-    return delta;
-
 }
