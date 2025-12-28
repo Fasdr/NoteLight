@@ -17,13 +17,13 @@ PositionControl::PositionControl(QWidget* parent) : QWidget(parent),
         directionLabels[i].setFixedSize(80, 80);
         directionLabels[i].setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
         directionLabels[i].setAlignment(Qt::AlignCenter);
+        directionLabels[i].setAttribute(Qt::WA_TransparentForMouseEvents, true);
         gridLayout.addWidget(&directionLabels[i], i / 3, i % 3);
     }
     for (int i{0}; i < 9; ++i) {
         gridLayout.setColumnStretch(i, 1);
         gridLayout.setRowStretch(i, 1);
     }
-
 }
 
 PositionControl::~PositionControl() {
