@@ -10,7 +10,7 @@ PositionControl::PositionControl(QWidget* parent) : QWidget(parent),
     //     "↙️", "⬇️", "↘️"};
     std::array<QString, 9> directionElements = {
         "↘", "⬇", "↙",
-        "➡", "◆︎", "⬅",
+        "▶", "◆︎", "◀",
         "↗", "⬆", "↖"};
     for (int i{0}; i < 9; ++i) {
         directionLabels[i].setText(directionElements[i]);
