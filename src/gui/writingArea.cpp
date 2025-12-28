@@ -112,7 +112,9 @@ void WritingArea::paintEvent(QPaintEvent *event) {
 }
 
 void WritingArea::updateScroll(QPointF delta) {
-    std::cout << "Move the canvas!" << std::endl;    
+    xOrigin += delta.x() / zoom;
+    yOrigin += delta.y() / zoom;
+    recreateCanvas();
 }
 
 void WritingArea::updateBackgroundColor(QColor newColor) {
