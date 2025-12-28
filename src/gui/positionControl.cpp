@@ -31,12 +31,18 @@ bool PositionControl::event(QEvent *event) {
     switch (event->type()) {
         case QEvent::TouchBegin:
             std::cout << "TouchBegin" << std::endl;
+            QTouchEvent* touch = static_cast<QTouchEvent*>(event);
+            std::cout << touch->points().size() << std::endl;
             break;
         case QEvent::TouchUpdate:
             std::cout << "TouchUpdate" << std::endl;
+            QTouchEvent* touch = static_cast<QTouchEvent*>(event);
+            std::cout << touch->points().size() << std::endl;
             break;
         case QEvent::TouchEnd:
             std::cout << "TouchEnd" << std::endl;
+            QTouchEvent* touch = static_cast<QTouchEvent*>(event);
+            std::cout << touch->points().size() << std::endl;
             break;
         default:
             return QWidget::event(event);
