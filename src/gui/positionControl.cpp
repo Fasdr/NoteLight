@@ -82,7 +82,7 @@ bool PositionControl::event(QEvent *event) {
 
 QPointF PositionControl::applyAcceleration(QPointF newPoint) {
     QPointF delta(newPoint - previousPoint);
-    traveledDistance += std::pow(delta.x(), 2) + std::pow(delta.y(), 2);
-
-    return delta * traveledDistance;
+    traveledDistance += std::pow(std::pow(delta.x(), 2) + std::pow(delta.y(), 2), 0.5);
+    return delta;
+    // return delta * traveledDistance;
 }
