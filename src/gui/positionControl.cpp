@@ -4,10 +4,14 @@
 PositionControl::PositionControl(QWidget* parent) : QWidget(parent),
         gridLayout(this) {
     setAttribute(Qt::WA_AcceptTouchEvents, true);
+    // std::array<QString, 9> directionElements = {
+    //     "↖️", "⬆️", "↗️",
+    //     "⬅️", "🔃", "➡️",
+    //     "↙️", "⬇️", "↘️"};
     std::array<QString, 9> directionElements = {
-        "↖️", "⬆️", "↗️",
-        "⬅️", "🔃", "➡️",
-        "↙️", "⬇️", "↘️"};
+        "↘", "⬇", "↙",
+        "➡", "◆︎", "⬅",
+        "↗", "⬆", "↖"};
     for (int i{0}; i < 9; ++i) {
         directionLabels[i].setText(directionElements[i]);
         directionLabels[i].setFixedSize(80, 80);
