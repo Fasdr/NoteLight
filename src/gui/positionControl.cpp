@@ -80,8 +80,8 @@ QPointF PositionControl::applyAcceleration(QPointF newPoint) {
     QPointF delta(newPoint - previousPoint);
     traveledDistance += std::pow(std::pow(delta.x(), 2) + std::pow(delta.y(), 2), 0.5);
     std::cout << "Travel Distance now: " << traveledDistance << std::endl;
-    std::cout << "X size: " << rect().x() << std::endl;
-    double prop = traveledDistance / rect().x();
+    std::cout << "X size: " << rect().width() << std::endl;
+    double prop = traveledDistance / rect().width();
     std::cout << "Res. prop.: " << prop << std::endl;
     if (prop < 0.25) {
         return delta * prop;
