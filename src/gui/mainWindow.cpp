@@ -214,10 +214,8 @@ void MainWindow::loadSession() {
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
-    if (suggestToSaveOrAbort()) {
-        return;
-    }
-    event->accept();
+    event->ignore();
+    exitApp();
 }
 
 void MainWindow::exitApp() {
