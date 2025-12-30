@@ -21,8 +21,6 @@
 #include <QList>
 
 #include <array>
-#include <vector>
-#include <unordered_map>
 #include <utility>
 #include <array>
 
@@ -199,7 +197,6 @@ class WritingArea : public QWidget{
         double xOrigin{}, yOrigin{}, zoom{1.0};
         int patchSize;
         int nPatches{2000}; // is not consistent with different screens, will be fixed later
-        std::unordered_map<int, std::vector<LineSegment>> internalStore;
         QMap<qint32, QList<LineSegment>> qInternalStore;
         int combineIntoIndex(int i, int j);
         QPointF lastPoint;
