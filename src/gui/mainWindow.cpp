@@ -2,6 +2,8 @@
 
 #include <QMenuBar>
 
+#include <QFileDialog>
+#include <QFile>
 #include <QFontDialog>
 #include <QMessageBox>
 
@@ -73,11 +75,42 @@ void MainWindow::newFile() {
 }
 
 void MainWindow::openFile() {
-    std::cout << "TODO: open file" << std::endl;
+    QString fileName{QFileDialog::getOpenFileName(this, "Open File")};
+    if (fileName.isEmpty()) {
+        std::cout << "Nothing to open!" << std::endl;
+        return;
+    }
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly)) {
+        QMessageBox::warning(this, "Warning", "Cannot open file: " + file.errorString());
+        return;
+    }
+    setWindowTitle(fileName);
+    QDataStream input(&file);
+    quint32 fileVersionBig, fileVersionSmall;
+    input >> fileVersionBig >> fileVersionSmall;
+
 }
 
+#include <QList>
 void MainWindow::saveFile() {
-    std::cout << "TODO: save file" << std::endl;
+    QString fileName;
+    fileName = QFileDialog::getSaveFileName(this, "Save");
+    if (fileName.isEmpty()) {
+        std::cout << "No file to save into!" << std::endl;
+        return;
+    }
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly)) {
+        QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
+        return;
+    }
+    QDataStream output(&file);
+    output << versionBig << versionSmall;
+    
+
+
+    file.close();
 }
 
 void MainWindow::exitApp() {

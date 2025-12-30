@@ -4,3 +4,6 @@ build/
 .cache/
 # Settings for the app
 appSettings.ini
+# Application files
+# Note Light Canvas fiels
+*.nlca

@@ -15,6 +15,7 @@
 #include <QFrame>
 #include <QLabel>
 #include <QSlider>
+#include <QDataStream>
 
 #include <array>
 #include <vector>
@@ -156,6 +157,18 @@ struct LineSegment {
     double width;
 };
 
+inline QDataStream& operator<<(QDataStream &out, const LineSegment& lineSegment) {
+    out << lineSegment.start << lineSegment.end << lineSegment.color << static_cast<qreal>(lineSegment.width);
+    return out;
+}
+
+inline QDataStream& operator>>(QDataStream &in, LineSegment& lineSegment) {
+    qreal width;
+    in >> lineSegment.start >> lineSegment.end >> lineSegment.color >> width;
+    lineSegment.width = static_cast<double>(width);
+    return in;
+}
+
 class WritingArea : public QWidget{
     Q_OBJECT
     public:
@@ -219,6 +232,8 @@ class MainWindow : public QMainWindow {
         ~MainWindow();
 
     private:
+
+        quint32 versionBig{0}, versionSmall{5};
 
         QSettings appSettings;
         void loadSettings();
