@@ -129,6 +129,8 @@ void WritingArea::updatePenWidth(int newWidth) {
 void WritingArea::updateZoom(int newZoomValue) {
     double newZoom{static_cast<double>(newZoomValue) / 100};
     if (newZoom != zoom) {
+        QPointF newOrigin = QPointF{xOrigin, yOrigin} 
+            + geometry().bottomRight().toPointF() * (1 / zoom - 1 / newZoom);
         zoom = newZoom;
         recreateCanvas();
     }
