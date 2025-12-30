@@ -239,7 +239,7 @@ bool MainWindow::suggestToSaveOrAbort() {
     saveQuestion.setDefaultButton(QMessageBox::Yes);
 
     int response{QMessageBox::Yes};
-    while (writingArea.getHasUnsavedChanges() && QMessageBox::Yes) {
+    while (writingArea.getHasUnsavedChanges() && response == QMessageBox::Yes) {
         response = saveQuestion.exec();
         if (response == QMessageBox::Yes) {
             saveFile();
