@@ -94,17 +94,22 @@ void MainWindow::openFile() {
     if (suggestToSaveOrAbort()) {
         return;
     }
-    QString fileName{QFileDialog::getOpenFileName(this, "Open File")};
-    if (fileName.isEmpty()) {
-        std::cout << "Nothing to open!" << std::endl;
+    QString fileName;
+    QFileDialog openFileDialog(this, "Open File");
+    openFileDialog.setAcceptMode(QFileDialog::AcceptOpen);
+    const QStringList filters({"Note Light Canvas file (*.nlca)"});
+    openFileDialog.setNameFilters(filters);
+    openFileDialog.exec();
+    if (openFileDialog.selectedFiles().empty()) {
+        std::cout << "Nothing to open" << std::endl;
         return;
     }
+    fileName = openFileDialog.selectedFiles()[0];
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly)) {
         QMessageBox::warning(this, "Warning", "Cannot open file: " + file.errorString());
         return;
     }
-    // setWindowTitle(fileName);
     QDataStream input(&file);
     quint32 fileVersionBig, fileVersionSmall;
     input >> fileVersionBig >> fileVersionSmall;
@@ -145,7 +150,7 @@ void MainWindow::saveFile() {
 void MainWindow::saveFileAs() {
     QString fileName;
     // fileName = QFileDialog::getSaveFileName(this, "Save As");
-    QFileDialog saveFileDialog(this, "Save As");
+    QFileDialog saveFileDialog(this, "Save File As");
     saveFileDialog.setAcceptMode(QFileDialog::AcceptSave);
     const QStringList filters({"Note Light Canvas file (*.nlca)"});
     saveFileDialog.setNameFilters(filters);
@@ -206,6 +211,13 @@ void MainWindow::loadSession() {
     input >> data;
     writingArea.setQInternalStore(std::move(data));
     configureTitle();
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+    if (suggestToSaveOrAbort()) {
+        return;
+    }
+    event->accept();
 }
 
 void MainWindow::exitApp() {

@@ -244,6 +244,9 @@ class MainWindow : public QMainWindow {
     public slots:
         void configureTitle();
 
+    protected:
+        void closeEvent(QCloseEvent *event) override;
+
     private:
 
         quint32 versionBig{0}, versionSmall{5};
