@@ -194,6 +194,9 @@ class WritingArea : public QWidget{
         void updatePenWidth(int newWidth);
         void updateZoom(int newZoomValue);
 
+    signals:
+        void changeMade();
+
     private:
         DrawingToolsMenu drawingToolsMenu;
         std::pair<int, int> getCoordinates(QPointF point);
@@ -238,6 +241,9 @@ class MainWindow : public QMainWindow {
         MainWindow(QWidget* parent = nullptr);
         ~MainWindow();
 
+    public slots:
+        void configureTitle();
+
     private:
 
         quint32 versionBig{0}, versionSmall{5};
@@ -252,6 +258,7 @@ class MainWindow : public QMainWindow {
         void saveFile();
         void saveFileAs();
         void exitApp();
+        bool suggestToSaveOrAbort();
 
         SettingsActions settingsActions;
         void configureSettingsMenu();

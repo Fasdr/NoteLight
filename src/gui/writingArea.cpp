@@ -112,6 +112,10 @@ int WritingArea::processSegment(QPointF startPoint, QPointF endPoint) {
             qInternalStore[combineIntoIndex(i, j)].push_back(thisSegment);
         }
     }
+    if (!hasUnsavedChanges) {
+        hasUnsavedChanges = true;
+        emit changeMade();
+    }
 
     return 0;
 }

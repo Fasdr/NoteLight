@@ -29,6 +29,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent),
     setCentralWidget(&writingArea);
 
     loadSession();
+
+    connect(&writingArea, &WritingArea::changeMade,
+            this, &MainWindow::configureTitle);
 }
 
 void MainWindow::loadSettings() {
@@ -78,10 +81,19 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::newFile() {
-    std::cout << "TODO: new file" << std::endl;
+    if (suggestToSaveOrAbort()) {
+        return;
+    }
+    QMap<qint32, QList<LineSegment>> data;
+    writingArea.setQInternalStore(std::move(data));
+    currentWorkingFile = "";
+    configureTitle();
 }
 
 void MainWindow::openFile() {
+    if (suggestToSaveOrAbort()) {
+        return;
+    }
     QString fileName{QFileDialog::getOpenFileName(this, "Open File")};
     if (fileName.isEmpty()) {
         std::cout << "Nothing to open!" << std::endl;
@@ -96,15 +108,17 @@ void MainWindow::openFile() {
     QDataStream input(&file);
     quint32 fileVersionBig, fileVersionSmall;
     input >> fileVersionBig >> fileVersionSmall;
-
     if (fileVersionBig != 0 || fileVersionSmall != 5) {
         std::cout << "File version is "<< fileVersionBig << "." << fileVersionSmall << std::endl;
         QMessageBox::warning(this, "Warning", "This file version is not supported!");
         return;
     }
-
-
     input.setVersion(QDataStream::Qt_6_10);
+    QMap<qint32, QList<LineSegment>> data;
+    input >> data;
+    writingArea.setQInternalStore(std::move(data));
+    currentWorkingFile = fileName;
+    configureTitle();
 }
 
 void MainWindow::saveFile() {
@@ -125,6 +139,7 @@ void MainWindow::saveFile() {
     output << writingArea.getQInternalStore();
     file.close();
     writingArea.setHasUnsavedChanges(false);
+    configureTitle();
 }
 
 void MainWindow::saveFileAs() {
@@ -154,6 +169,7 @@ void MainWindow::saveFileAs() {
     file.close();
     writingArea.setHasUnsavedChanges(false);
     currentWorkingFile = fileName;
+    configureTitle();
 }
 
 void MainWindow::loadSession() {
@@ -163,12 +179,14 @@ void MainWindow::loadSession() {
         currentWorkingFile = "";
     }
     if (currentWorkingFile.isEmpty()) {
+        configureTitle();
         return;
     }
     QFile file(currentWorkingFile);
     if (!file.open(QIODevice::ReadOnly)) {
-        QMessageBox::warning(this, "Warning", "Loading... Cannot open file: " + file.errorString());
+        std::cout << "Loading... Cannot open file: " << file.errorString().toStdString() << std::endl;
         currentWorkingFile = "";
+        configureTitle();
         return;
     }
 
@@ -180,15 +198,20 @@ void MainWindow::loadSession() {
         std::cout << "File version is "<< fileVersionBig << "." << fileVersionSmall << std::endl;
         QMessageBox::warning(this, "Warning", "This file version is not supported!");
         currentWorkingFile = "";
+        configureTitle();
         return;
     }
     input.setVersion(QDataStream::Qt_6_10);
     QMap<qint32, QList<LineSegment>> data;
     input >> data;
     writingArea.setQInternalStore(std::move(data));
+    configureTitle();
 }
 
 void MainWindow::exitApp() {
+    if (suggestToSaveOrAbort()) {
+        return;
+    }
     appSession.setValue("CurrentWorkingFile", currentWorkingFile);
     qApp->exit();
 }
@@ -207,6 +230,22 @@ void MainWindow::applyFontToDrawingTools() {
     QFont curFont = qApp->font();
     curFont.setPointSize(curFont.pointSize() * 1.5);
     writingArea.setFont(curFont);
+}
+
+bool MainWindow::suggestToSaveOrAbort() {
+    QMessageBox saveQuestion;
+    saveQuestion.setText("This file has unsaved changes. Do you want to save them first?");
+    saveQuestion.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+    saveQuestion.setDefaultButton(QMessageBox::Yes);
+
+    int response{QMessageBox::Yes};
+    while (writingArea.getHasUnsavedChanges() && QMessageBox::Yes) {
+        response = saveQuestion.exec();
+        if (response == QMessageBox::Yes) {
+            saveFile();
+        }
+    }
+    return !(response == QMessageBox::No || response == QMessageBox::Yes);
 }
 
 void MainWindow::setDefault() {
@@ -235,4 +274,11 @@ void MainWindow::changeFullScreen() {
         move(0, 0);
         setWindowState(Qt::WindowFullScreen);
     }
+}
+
+void MainWindow::configureTitle() {
+    QString currentTitle = QString("Note Light - %1 %2")
+        .arg(currentWorkingFile.isEmpty() ? "Untitled" : currentWorkingFile)
+        .arg(writingArea.getHasUnsavedChanges() ? "*" : "");
+    setWindowTitle(currentTitle);
 }
