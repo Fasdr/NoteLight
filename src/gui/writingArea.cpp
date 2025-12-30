@@ -48,6 +48,23 @@ DrawingToolsMenu* WritingArea::getDrawingToolsMenu() {
     return &drawingToolsMenu;
 }
 
+QMap<qint32, QList<LineSegment>>& WritingArea::getQInternalStore() {
+    return qInternalStore;
+}
+
+void WritingArea::setQInternalStore(QMap<qint32, QList<LineSegment>>&& loadedInternalStore) {
+    qInternalStore = loadedInternalStore;
+    hasUnsavedChanges = false;
+}
+
+bool WritingArea::getHasUnsavedChanges() {
+    return hasUnsavedChanges;
+}
+
+void WritingArea::setHasUnsavedChanges(bool newVal) {
+    hasUnsavedChanges = newVal;
+}
+
 void WritingArea::tabletEvent(QTabletEvent *event) {
     event->accept();
     auto point = event->position();

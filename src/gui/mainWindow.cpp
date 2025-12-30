@@ -11,10 +11,12 @@
 #include <chrono>
 #include <iostream>
 #include <thread>
+#include <format>
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent),
         appSettings("./appSettings.ini", QSettings::IniFormat),
-        writingArea(this) {
+        writingArea(this),
+        appSession("./appSession.ini", QSettings::IniFormat) {
     
     loadSettings();
     configureFileMenu();
@@ -22,8 +24,11 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent),
 
     connect(writingArea.getDrawingToolsMenu()->getChangeFullScreenButton(), &QPushButton::clicked,
             this, &MainWindow::changeFullScreen);
-
+    
+    
     setCentralWidget(&writingArea);
+
+    loadSession();
 }
 
 void MainWindow::loadSettings() {
@@ -42,13 +47,15 @@ void MainWindow::configureFileMenu() {
     connect(&fileActions.actionNewFile, &QAction::triggered, this, &MainWindow::newFile);
     connect(&fileActions.actionOpenFile, &QAction::triggered, this, &MainWindow::openFile);
     connect(&fileActions.actionSaveFile, &QAction::triggered, this, &MainWindow::saveFile);
+    connect(&fileActions.actionSaveFileAs, &QAction::triggered, this, &MainWindow::saveFileAs);
     connect(&fileActions.actionExitApp, &QAction::triggered, this, &MainWindow::exitApp);
 
     auto fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addActions({
         &fileActions.actionNewFile,
         &fileActions.actionOpenFile,
-        &fileActions.actionSaveFile});
+        &fileActions.actionSaveFile,
+        &fileActions.actionSaveFileAs});
     fileMenu->addSeparator();
     fileMenu->addActions({
         &fileActions.actionExitApp});
@@ -85,35 +92,104 @@ void MainWindow::openFile() {
         QMessageBox::warning(this, "Warning", "Cannot open file: " + file.errorString());
         return;
     }
-    setWindowTitle(fileName);
+    // setWindowTitle(fileName);
     QDataStream input(&file);
     quint32 fileVersionBig, fileVersionSmall;
     input >> fileVersionBig >> fileVersionSmall;
 
+    if (fileVersionBig != 0 || fileVersionSmall != 5) {
+        std::cout << "File version is "<< fileVersionBig << "." << fileVersionSmall << std::endl;
+        QMessageBox::warning(this, "Warning", "This file version is not supported!");
+        return;
+    }
+
+
+    input.setVersion(QDataStream::Qt_6_10);
 }
 
-#include <QList>
 void MainWindow::saveFile() {
+    if (currentWorkingFile.isEmpty()) {
+        saveFileAs();
+        return;
+    }
+    QFile file(currentWorkingFile);
+    if (!file.open(QIODevice::WriteOnly)) {
+        file.close();
+        saveFileAs();
+        return;
+    }
+    // Writing into a file
+    QDataStream output(&file);
+    output << versionBig << versionSmall;
+    output.setVersion(QDataStream::Qt_6_10);
+    output << writingArea.getQInternalStore();
+    file.close();
+    writingArea.setHasUnsavedChanges(false);
+}
+
+void MainWindow::saveFileAs() {
     QString fileName;
-    fileName = QFileDialog::getSaveFileName(this, "Save");
-    if (fileName.isEmpty()) {
+    // fileName = QFileDialog::getSaveFileName(this, "Save As");
+    QFileDialog saveFileDialog(this, "Save As");
+    saveFileDialog.setAcceptMode(QFileDialog::AcceptSave);
+    const QStringList filters({"Note Light Canvas file (*.nlca)"});
+    saveFileDialog.setNameFilters(filters);
+    saveFileDialog.exec();
+    // saveFileDialog.set
+    if (saveFileDialog.selectedFiles().empty()) {
         std::cout << "No file to save into!" << std::endl;
         return;
     }
+    fileName = saveFileDialog.selectedFiles()[0];
     QFile file(fileName);
     if (!file.open(QIODevice::WriteOnly)) {
         QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
         return;
     }
+    // Writing into a file
     QDataStream output(&file);
     output << versionBig << versionSmall;
-    
-
-
+    output.setVersion(QDataStream::Qt_6_10);
+    output << writingArea.getQInternalStore();
     file.close();
+    writingArea.setHasUnsavedChanges(false);
+    currentWorkingFile = fileName;
+}
+
+void MainWindow::loadSession() {
+    if (appSession.contains("CurrentWorkingFile")) {
+        currentWorkingFile = appSession.value("CurrentWorkingFile").value<QString>();
+    } else {
+        currentWorkingFile = "";
+    }
+    if (currentWorkingFile.isEmpty()) {
+        return;
+    }
+    QFile file(currentWorkingFile);
+    if (!file.open(QIODevice::ReadOnly)) {
+        QMessageBox::warning(this, "Warning", "Loading... Cannot open file: " + file.errorString());
+        currentWorkingFile = "";
+        return;
+    }
+
+    QDataStream input(&file);
+    quint32 fileVersionBig, fileVersionSmall;
+    input >> fileVersionBig >> fileVersionSmall;
+
+    if (fileVersionBig != 0 || fileVersionSmall != 5) {
+        std::cout << "File version is "<< fileVersionBig << "." << fileVersionSmall << std::endl;
+        QMessageBox::warning(this, "Warning", "This file version is not supported!");
+        currentWorkingFile = "";
+        return;
+    }
+    input.setVersion(QDataStream::Qt_6_10);
+    QMap<qint32, QList<LineSegment>> data;
+    input >> data;
+    writingArea.setQInternalStore(std::move(data));
 }
 
 void MainWindow::exitApp() {
+    appSession.setValue("CurrentWorkingFile", currentWorkingFile);
     qApp->exit();
 }
 

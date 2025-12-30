@@ -176,6 +176,10 @@ class WritingArea : public QWidget{
         WritingArea(QWidget* parent = nullptr);
         ~WritingArea();
         DrawingToolsMenu* getDrawingToolsMenu();
+        QMap<qint32, QList<LineSegment>>& getQInternalStore();
+        bool getHasUnsavedChanges();
+        void setHasUnsavedChanges(bool newVal);
+        void setQInternalStore(QMap<qint32, QList<LineSegment>>&& loadedInternalStore);
 
     protected:
         // void mousePressEvent(QMouseEvent *event) override;
@@ -197,6 +201,7 @@ class WritingArea : public QWidget{
         double xOrigin{}, yOrigin{}, zoom{1.0};
         int patchSize;
         int nPatches{2000}; // is not consistent with different screens, will be fixed later
+        bool hasUnsavedChanges{false};
         QMap<qint32, QList<LineSegment>> qInternalStore;
         int combineIntoIndex(int i, int j);
         QPointF lastPoint;
@@ -212,9 +217,10 @@ class WritingArea : public QWidget{
 class FileActions : public QObject {
     Q_OBJECT
     public:
-        QAction actionNewFile = QAction(tr("&New file"), nullptr);
-        QAction actionOpenFile = QAction(tr("&Open file"), nullptr);
-        QAction actionSaveFile = QAction(tr("&Save file"), nullptr);
+        QAction actionNewFile = QAction(tr("&New File"), nullptr);
+        QAction actionOpenFile = QAction(tr("&Open File"), nullptr);
+        QAction actionSaveFile = QAction(tr("&Save File"), nullptr);
+        QAction actionSaveFileAs = QAction(tr("S&ave File As"), nullptr);
         QAction actionExitApp = QAction(tr("&Exit"), nullptr);
 
 };
@@ -223,7 +229,7 @@ class SettingsActions : public QObject {
     Q_OBJECT
     public:
         QAction actionChooseFont = QAction(tr("&Font"), nullptr);
-        QAction actionSetDefault = QAction(tr("&Set default"), nullptr);
+        QAction actionSetDefault = QAction(tr("&Set Default"), nullptr);
 };
 
 class MainWindow : public QMainWindow {
@@ -244,6 +250,7 @@ class MainWindow : public QMainWindow {
         void newFile();
         void openFile();
         void saveFile();
+        void saveFileAs();
         void exitApp();
 
         SettingsActions settingsActions;
@@ -253,6 +260,10 @@ class MainWindow : public QMainWindow {
         void setDefault();
 
         WritingArea writingArea;
+
+        QSettings appSession;
+        void loadSession();
+        QString currentWorkingFile;
 
         void changeFullScreen();
 };
