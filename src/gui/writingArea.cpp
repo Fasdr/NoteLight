@@ -130,7 +130,7 @@ void WritingArea::updateZoom(int newZoomValue) {
     double newZoom{static_cast<double>(newZoomValue) / 100};
     if (newZoom != zoom) {
         QPointF newOrigin = QPointF{xOrigin, yOrigin} 
-            + geometry().bottomRight().toPointF() * (1 / zoom - 1 / newZoom);
+            + geometry().bottomRight().toPointF() / 2 * (1 / zoom - 1 / newZoom);
         xOrigin = newOrigin.x();
         yOrigin = newOrigin.y();
         zoom = newZoom;
