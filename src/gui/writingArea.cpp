@@ -131,6 +131,8 @@ void WritingArea::updateZoom(int newZoomValue) {
     if (newZoom != zoom) {
         QPointF newOrigin = QPointF{xOrigin, yOrigin} 
             + geometry().bottomRight().toPointF() * (1 / zoom - 1 / newZoom);
+        xOrigin = newOrigin.x();
+        yOrigin = newOrigin.y();
         zoom = newZoom;
         recreateCanvas();
     }
