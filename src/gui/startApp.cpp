@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QByteArray>
 #include <guiInternal.h>
 
 namespace gui_f {
@@ -8,6 +9,8 @@ namespace gui_f {
         qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "0");
         qputenv("QT_SCALE_FACTOR", "1");
         qputenv("QT_FONT_DPI", "96");
+        qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
+
 
         QApplication app(argc, argv);
 
