@@ -17,6 +17,9 @@
 #include <QSlider>
 #include <QDataStream>
 
+#include <QMap>
+#include <QList>
+
 #include <array>
 #include <vector>
 #include <unordered_map>
@@ -197,6 +200,7 @@ class WritingArea : public QWidget{
         int patchSize;
         int nPatches{2000}; // is not consistent with different screens, will be fixed later
         std::unordered_map<int, std::vector<LineSegment>> internalStore;
+        QMap<qint32, QList<LineSegment>> qInternalStore;
         int combineIntoIndex(int i, int j);
         QPointF lastPoint;
         QPen canvasPen;
