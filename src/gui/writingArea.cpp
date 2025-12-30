@@ -55,6 +55,7 @@ QMap<qint32, QList<LineSegment>>& WritingArea::getQInternalStore() {
 void WritingArea::setQInternalStore(QMap<qint32, QList<LineSegment>>&& loadedInternalStore) {
     qInternalStore = loadedInternalStore;
     hasUnsavedChanges = false;
+    recreateCanvas();
 }
 
 bool WritingArea::getHasUnsavedChanges() {
