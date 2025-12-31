@@ -81,6 +81,7 @@ PenWidthSliderDialog::~PenWidthSliderDialog() {
 
 void PenWidthSliderDialog::penWidthSliderMoved(int newWidth) {
     penWidth = newWidth;
+    sliderControl.setValue(penWidth);
     valueLabel.setText(QString("%1\n𓂃✍︎").arg(newWidth, 2, 10, u' '));
     emit penWidthChanged(newWidth);
 }
