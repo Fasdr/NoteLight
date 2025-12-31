@@ -71,7 +71,8 @@ class SimpleColorDialog : public QDialog {
         SimpleColorDialog(int startingColor = 0, QWidget* parent = nullptr);
         ~SimpleColorDialog();
         QColor getColor();
-
+        void setColor(QColor newColor);
+        
     signals:
         void colorUpdated(QColor newColor);
 
@@ -86,7 +87,6 @@ class SimpleColorDialog : public QDialog {
         QColor pickedColor;
         QGridLayout colorGrid;
         std::array<QPushButton, nColors> colorButtons;
-        void setColor(QColor newColor);
 };
 
 class ZoomControl : public QWidget {
@@ -125,6 +125,9 @@ class DrawingToolsMenu : public QWidget {
 
         QPushButton* getChangeFullScreenButton();
 
+        SimpleColorDialog backgroundColorDialog;
+        SimpleColorDialog penColorDialog;
+
     public slots:
         void updateBackgroundColorButton(QColor newColor);
         void updatePenColorButton(QColor newColor);
@@ -137,11 +140,9 @@ class DrawingToolsMenu : public QWidget {
         QPushButton backgroundColorButton;
         QVBoxLayout backgroundColorButtonLayout;
         QLabel backgroundColorButtonLabel;
-        SimpleColorDialog backgroundColorDialog;
         QPushButton penColorButton;
         QVBoxLayout penColorButtonLayout;
         QLabel penColorButtonLabel;
-        SimpleColorDialog penColorDialog;
         QPushButton penWidthButton;
         QVBoxLayout penWidthButtonLayout;
         QLabel penWidthButtonLabel;

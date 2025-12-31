@@ -249,13 +249,13 @@ void WritingArea::loadFileSession(QString currentWorkingFile) {
     if (appSession.contains(penKey)) {
         canvasPen = appSession.value(penKey).value<QPen>();
         drawingToolsMenu.getPenWidthSliderDialog()->penWidthSliderMoved(canvasPen.width());
-        drawingToolsMenu.updatePenColorButton(canvasPen.color());
+        drawingToolsMenu.penColorDialog.setColor(canvasPen.color());
     }
 
     QString backgroundColorKey = "Files/" + fileName + "/BackgroundColor";
     if (appSession.contains(backgroundColorKey)) {
         canvasBackgroundColor = appSession.value(backgroundColorKey).value<QColor>();
-        drawingToolsMenu.updateBackgroundColorButton(canvasBackgroundColor);
+        drawingToolsMenu.backgroundColorDialog.setColor(canvasBackgroundColor);
     }
 }
 
