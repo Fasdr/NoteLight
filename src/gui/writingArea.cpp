@@ -207,13 +207,12 @@ int WritingArea::recreateCanvas() {
 void WritingArea::resizeEvent(QResizeEvent *event) {
     QWidget::resizeEvent(event);
 
-    // if (this->geometry().width() > canvasImage.width() 
-    //         || this->geometry().height() > canvasImage.height()) {
-    //     int extraMargin = 256;
-    //     canvasImage = QPixmap(this->geometry().width() + extraMargin,
-    //                             this->geometry().height() + extraMargin);
-    //     recreateCanvas();
-    // }
+    if (this->geometry().width() > canvasImage.width() 
+            || this->geometry().height() > canvasImage.height()) {
+        int extraMargin = 256;
+        canvasImage = QPixmap(this->geometry().width() + extraMargin,
+                                this->geometry().height() + extraMargin);
+    }
     recreateCanvas();
 
     updateDrawingToolsMenuPosition();
