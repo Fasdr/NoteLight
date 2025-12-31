@@ -3,6 +3,7 @@
 #include <QGuiApplication>
 #include <QRectF>
 #include <QColorDialog>
+#include <QFileInfo>
 
 #include <algorithm>
 #include <iostream>
@@ -11,9 +12,11 @@
 WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
         drawingToolsMenu(this),
         canvasImage(QGuiApplication::primaryScreen()->geometry().width(),
-         QGuiApplication::primaryScreen()->geometry().height()),
-         patchSize(std::max(QGuiApplication::primaryScreen()->geometry().width(),
-                    QGuiApplication::primaryScreen()->geometry().height()) + 256) {
+                    QGuiApplication::primaryScreen()->geometry().height()),
+        patchSize(std::max(QGuiApplication::primaryScreen()->geometry().width(),
+                  QGuiApplication::primaryScreen()->geometry().height()) + 256),
+        appSettings("./appSettings.ini", QSettings::IniFormat),
+        appSession("./appSession.ini", QSettings::IniFormat) {
     setAttribute(Qt::WA_StaticContents);
     
     
@@ -224,6 +227,49 @@ void WritingArea::updateDrawingToolsMenuPosition() {
 
 void WritingArea::updatePenColor(QColor newColor) {
     canvasPen.setColor(newColor);
+}
+
+void WritingArea::loadFileSession(QString currentWorkingFile) {
+    QString fileName{QFileInfo(currentWorkingFile).fileName()};
+    
+    QString zoomKey = "Files/" + fileName + "/Zoom";
+    if (appSession.contains(zoomKey)) {
+        zoom = appSession.value(zoomKey).value<double>();
+        drawingToolsMenu.getZoomControl()->setZoomValue(zoom);
+    }
+
+    QString originKey = "Files/" + fileName + "/Origin";
+    if (appSession.contains(originKey)) {
+        QPointF xy = appSession.value(originKey).value<QPointF>();
+        xOrigin = xy.x();
+        yOrigin = xy.y();
+    }
+
+    QString penKey = "Files/" + fileName + "/Pen";
+    if (appSession.contains(penKey)) {
+        canvasPen = appSession.value(penKey).value<QPen>();
+        drawingToolsMenu.getPenWidthSliderDialog()->penWidthSliderMoved(canvasPen.width());
+        drawingToolsMenu.updatePenColorButton(canvasPen.color());
+    }
+
+    QString backgroundColorKey = "Files/" + fileName + "/BackgroundColor";
+    if (appSession.contains(backgroundColorKey)) {
+        canvasBackgroundColor = appSession.value(backgroundColorKey).value<QColor>();
+        drawingToolsMenu.updateBackgroundColorButton(canvasBackgroundColor);
+    }
+}
+
+void WritingArea::saveFileSession(QString currentWorkingFile) {
+    if (currentWorkingFile.isEmpty()) {
+        return;
+    }
+    QString fileName{QFileInfo(currentWorkingFile).fileName()};
+
+    appSession.setValue("Files/" + fileName + "/Origin", QPointF{xOrigin, yOrigin});
+    appSession.setValue("Files/" + fileName + "/Zoom", zoom);
+    appSession.setValue("Files/" + fileName + "/Pen", canvasPen);
+    appSession.setValue("Files/" + fileName + "/BackgroundColor", canvasBackgroundColor);
+    
 }
 
 inline std::pair<int, int> WritingArea::getCoordinates(QPointF point) {

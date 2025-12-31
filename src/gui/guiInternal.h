@@ -94,6 +94,7 @@ class ZoomControl : public QWidget {
     public:
         ZoomControl(QWidget* parent = nullptr);
         ~ZoomControl();
+        void setZoomValue(int newZoomValue);
 
     public slots:
         void decreaseZoomClicked();
@@ -109,7 +110,6 @@ class ZoomControl : public QWidget {
         QPushButton increaseButton;
         QPushButton zoomButton;
         QPushButton decreaseButton;
-        void setZoomValue(int newZoomValue);
 };
 
 class DrawingToolsMenu : public QWidget {
@@ -181,6 +181,9 @@ class WritingArea : public QWidget{
         void setHasUnsavedChanges(bool newVal);
         void setQInternalStore(QMap<qint32, QList<LineSegment>>&& loadedInternalStore);
 
+        void loadFileSession(QString currentWorkingFile);
+        void saveFileSession(QString currentWorkingFile);
+
     protected:
         // void mousePressEvent(QMouseEvent *event) override;
         void tabletEvent(QTabletEvent *event) override;
@@ -193,6 +196,7 @@ class WritingArea : public QWidget{
         void updatePenColor(QColor newColor);
         void updatePenWidth(int newWidth);
         void updateZoom(int newZoomValue);
+
 
     signals:
         void changeMade();
@@ -215,6 +219,8 @@ class WritingArea : public QWidget{
         int recreateCanvas();
 
         void updateDrawingToolsMenuPosition();
+        QSettings appSettings;
+        QSettings appSession;
 };
 
 class FileActions : public QObject {

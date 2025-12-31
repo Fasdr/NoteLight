@@ -81,6 +81,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::newFile() {
+    writingArea.saveFileSession(currentWorkingFile);
     if (suggestToSaveOrAbort()) {
         return;
     }
@@ -91,6 +92,7 @@ void MainWindow::newFile() {
 }
 
 void MainWindow::openFile() {
+    writingArea.saveFileSession(currentWorkingFile);
     if (suggestToSaveOrAbort()) {
         return;
     }
@@ -128,12 +130,14 @@ void MainWindow::openFile() {
     input.setVersion(QDataStream::Qt_6_10);
     QMap<qint32, QList<LineSegment>> data;
     input >> data;
+    writingArea.loadFileSession(currentWorkingFile);
     writingArea.setQInternalStore(std::move(data));
     currentWorkingFile = fileName;
     configureTitle();
 }
 
 void MainWindow::saveFile() {
+    writingArea.saveFileSession(currentWorkingFile);
     if (currentWorkingFile.isEmpty()) {
         saveFileAs();
         return;
@@ -155,6 +159,7 @@ void MainWindow::saveFile() {
 }
 
 void MainWindow::saveFileAs() {
+    writingArea.saveFileSession(currentWorkingFile);
     QString fileName;
     // fileName = QFileDialog::getSaveFileName(this, "Save As");
     QFileDialog saveFileDialog(this, "Save File As");
@@ -179,6 +184,7 @@ void MainWindow::saveFileAs() {
         QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
         return;
     }
+    writingArea.saveFileSession(currentWorkingFile);
     // Writing into a file
     QDataStream output(&file);
     output << versionBig << versionSmall;
@@ -222,6 +228,8 @@ void MainWindow::loadSession() {
     input.setVersion(QDataStream::Qt_6_10);
     QMap<qint32, QList<LineSegment>> data;
     input >> data;
+
+    writingArea.loadFileSession(currentWorkingFile);
     writingArea.setQInternalStore(std::move(data));
     configureTitle();
 }
@@ -236,6 +244,7 @@ void MainWindow::exitApp() {
         return;
     }
     appSession.setValue("CurrentWorkingFile", currentWorkingFile);
+    writingArea.saveFileSession(currentWorkingFile);
     qApp->exit();
 }
 
