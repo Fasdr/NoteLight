@@ -12,6 +12,7 @@ namespace gui_f {
         qputenv("QT_SCALE_FACTOR", "1");
         qputenv("QT_FONT_DPI", "96");
         
+        qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
 
         QApplication app(argc, argv);
 
