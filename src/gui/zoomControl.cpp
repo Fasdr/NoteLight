@@ -23,14 +23,14 @@ ZoomControl::~ZoomControl() {
 }
 
 void ZoomControl::decreaseZoomClicked() {
-    if (zoomValue == minVal) {
+    if (zoomValue <= minVal) {
         return;
     }
     setZoomValue(zoomValue - stepSize);
 }
 
 void ZoomControl::increaseZoomClicked() {
-    if (zoomValue == maxVal) {
+    if (zoomValue >= maxVal) {
         return;
     }
     setZoomValue(zoomValue + stepSize);
@@ -39,6 +39,9 @@ void ZoomControl::increaseZoomClicked() {
 void ZoomControl::setZoomValue(int newZoomValue) {
     if (zoomValue == newZoomValue) {
         return;
+    }
+    if (zoomValue % stepSize != 0) {
+        zoomValue = zoomValue - zoomValue % stepSize;
     }
     zoomValue = newZoomValue;
     emit zoomValueChanged(newZoomValue);
