@@ -1,4 +1,4 @@
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Quick VirtualKeyboard)
 
 qt_standard_project_setup()
 
@@ -47,6 +47,8 @@ target_link_libraries(guiFunctional
         Qt6::Core
         Qt6::Gui
         Qt6::Widgets
+        Qt6::Quick
+        Qt6::VirtualKeyboard
 )
 
 target_link_libraries(guiInternal
