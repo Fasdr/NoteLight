@@ -99,7 +99,14 @@ void MainWindow::openFile() {
     openFileDialog.setAcceptMode(QFileDialog::AcceptOpen);
     const QStringList filters({"Note Light Canvas file (*.nlca)"});
     openFileDialog.setNameFilters(filters);
-    openFileDialog.exec();
+
+    openFileDialog.setWindowModality(Qt::NonModal);
+    openFileDialog.show();
+
+    QEventLoop loop;
+    connect(&openFileDialog, &QFileDialog::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
     if (openFileDialog.selectedFiles().empty()) {
         std::cout << "Nothing to open" << std::endl;
         return;
@@ -154,8 +161,14 @@ void MainWindow::saveFileAs() {
     saveFileDialog.setAcceptMode(QFileDialog::AcceptSave);
     const QStringList filters({"Note Light Canvas file (*.nlca)"});
     saveFileDialog.setNameFilters(filters);
-    saveFileDialog.exec();
-    // saveFileDialog.set
+
+    saveFileDialog.setWindowModality(Qt::NonModal);
+    saveFileDialog.show();
+
+    QEventLoop loop;
+    connect(&saveFileDialog, &QFileDialog::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
     if (saveFileDialog.selectedFiles().empty()) {
         std::cout << "No file to save into!" << std::endl;
         return;
