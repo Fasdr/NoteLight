@@ -130,9 +130,9 @@ void MainWindow::openFile() {
     input.setVersion(QDataStream::Qt_6_10);
     QMap<qint32, QList<LineSegment>> data;
     input >> data;
+    currentWorkingFile = fileName;
     writingArea.loadFileSession(currentWorkingFile);
     writingArea.setQInternalStore(std::move(data));
-    currentWorkingFile = fileName;
     configureTitle();
 }
 
