@@ -40,8 +40,8 @@ void ZoomControl::setZoomValue(int newZoomValue) {
     if (zoomValue == newZoomValue) {
         return;
     }
-    if (zoomValue % stepSize != 0) {
-        zoomValue = zoomValue - zoomValue % stepSize;
+    if (newZoomValue % stepSize != 0) {
+        newZoomValue = newZoomValue - newZoomValue % stepSize;
     }
     zoomValue = newZoomValue;
     emit zoomValueChanged(newZoomValue);
