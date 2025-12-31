@@ -235,7 +235,7 @@ void WritingArea::loadFileSession(QString currentWorkingFile) {
     QString zoomKey = "Files/" + fileName + "/Zoom";
     if (appSession.contains(zoomKey)) {
         zoom = appSession.value(zoomKey).value<double>();
-        drawingToolsMenu.getZoomControl()->setZoomValue(zoom);
+        drawingToolsMenu.getZoomControl()->setZoomValue(static_cast<int>(100 * zoom));
     }
 
     QString originKey = "Files/" + fileName + "/Origin";
