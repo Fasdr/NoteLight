@@ -28,8 +28,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent),
     
     setCentralWidget(&writingArea);
 
-    loadSession();
-
     connect(&writingArea, &WritingArea::changeMade,
             this, &MainWindow::configureTitle);
 }

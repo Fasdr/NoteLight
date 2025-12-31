@@ -23,6 +23,8 @@ namespace gui_f {
         window.move(0, 0);
         window.setMinimumSize(200, 200);
         window.showMaximized();
+        window.loadSession();
+
 
         return app.exec();
     }

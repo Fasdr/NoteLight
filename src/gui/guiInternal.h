@@ -72,7 +72,7 @@ class SimpleColorDialog : public QDialog {
         ~SimpleColorDialog();
         QColor getColor();
         void setColor(QColor newColor);
-        
+
     signals:
         void colorUpdated(QColor newColor);
 
@@ -247,6 +247,7 @@ class MainWindow : public QMainWindow {
     public:
         MainWindow(QWidget* parent = nullptr);
         ~MainWindow();
+        void loadSession();
 
     public slots:
         void configureTitle();
@@ -279,7 +280,7 @@ class MainWindow : public QMainWindow {
         WritingArea writingArea;
 
         QSettings appSession;
-        void loadSession();
+
         QString currentWorkingFile;
 
         void changeFullScreen();

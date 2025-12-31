@@ -257,8 +257,6 @@ void WritingArea::loadFileSession(QString currentWorkingFile) {
         canvasBackgroundColor = appSession.value(backgroundColorKey).value<QColor>();
         drawingToolsMenu.backgroundColorDialog.setColor(canvasBackgroundColor);
     }
-
-    recreateCanvas();
 }
 
 void WritingArea::saveFileSession(QString currentWorkingFile) {
