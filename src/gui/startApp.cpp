@@ -12,8 +12,6 @@ namespace gui_f {
         qputenv("QT_SCALE_FACTOR", "1");
         qputenv("QT_FONT_DPI", "96");
         
-        qputenv("QT_IM_MODULE", QByteArray("maliit"));
-
 
         QApplication app(argc, argv);
 
@@ -24,7 +22,7 @@ namespace gui_f {
         window.move(0, 0);
         window.setMinimumSize(200, 200);
         window.showMaximized();
-
+        QGuiApplication::inputMethod()->show();
         return app.exec();
     }
 }
