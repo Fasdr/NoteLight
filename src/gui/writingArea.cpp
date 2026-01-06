@@ -155,8 +155,8 @@ void WritingArea::undoLastSegments() {
         int idx{segmentHistory[toCheck]}, qty{segmentHistory[toCheck - 1]};
         auto& segments{qInternalStore[idx]};
 
-        std::copy(segments.end() - qty, segments.end(), qInternalStoreRedo[idx].end());
-        std::cout << "Copy segments" << std::endl;
+        // std::copy(segments.end() - qty, segments.end(), qInternalStoreRedo[idx].end());
+        // std::cout << "Copy segments" << std::endl;
         segments.erase(segments.end() - qty, segments.end());
         std::cout << "Erase segments" << std::endl;
 
