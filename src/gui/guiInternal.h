@@ -216,6 +216,9 @@ class WritingArea : public QWidget{
         QPen canvasPen;
         QColor canvasBackgroundColor{0, 0, 0};
 
+        QList<int> segmentHistory;
+        void incrementSegmentHistory(int idx);
+
         int processSegment(QPointF startPoint, QPointF finishPoint);
         int recreateCanvas();
 

@@ -80,6 +80,7 @@ void WritingArea::tabletEvent(QTabletEvent *event) {
             return;
         case QEvent::TabletPress:
             lastPoint = point;
+            segmentHistory.push_back(-1);
             return;
         case QEvent::TabletRelease:
             processSegment(lastPoint, point);
@@ -112,7 +113,9 @@ int WritingArea::processSegment(QPointF startPoint, QPointF endPoint) {
     auto [miJ, maJ] = std::minmax(sj, ej);
     for (int i{miI}; i <= maI; ++i) {
         for (int j{miJ}; j <= maJ; ++j) {
-            qInternalStore[combineIntoIndex(i, j)].push_back(thisSegment);
+            int idx{combineIntoIndex(i, j)};
+            qInternalStore[idx].push_back(thisSegment);
+            incrementSegmentHistory(idx);
         }
     }
     if (!hasUnsavedChanges) {
@@ -121,6 +124,21 @@ int WritingArea::processSegment(QPointF startPoint, QPointF endPoint) {
     }
 
     return 0;
+}
+
+constexpr int segmentSeparator{-1};
+
+void WritingArea::incrementSegmentHistory(int idx) {
+    auto toCheck{segmentHistory.size() - 1};
+    while (toCheck != -1 && segmentHistory[toCheck] != segmentSeparator) {
+        if (segmentHistory[toCheck] == idx) {
+            ++segmentHistory[toCheck - 1];
+            return;
+        }
+        toCheck -= 2;
+    }
+    segmentHistory.push_back(1);
+    segmentHistory.push_back(idx);
 }
 
 // void WritingArea::mousePressEvent(QMouseEvent *event) {
