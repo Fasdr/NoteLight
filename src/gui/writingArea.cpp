@@ -151,18 +151,24 @@ void WritingArea::undoLastSegments() {
     bool changed{false};
     auto toCheck{segmentHistory.size() - 1};
     while (toCheck != -1 && segmentHistory[toCheck] != segmentSeparator) {
+        std::cout << "Moving segments" << std::endl;
         int idx{segmentHistory[toCheck]}, qty{segmentHistory[toCheck - 1]};
         auto& segments{qInternalStore[idx]};
 
         std::copy(segments.end() - qty, segments.end(), qInternalStoreRedo[idx].end());
+        std::cout << "Copy segments" << std::endl;
         segments.erase(segments.end() - qty, segments.end());
+        std::cout << "Erase segments" << std::endl;
 
         toCheck -= 2;
         changed = true;
     }
     if (changed) {
+        std::cout << "Moving history" << std::endl;
         std::copy(segmentHistory.begin() + toCheck, segmentHistory.end(), segmentHistoryRedo.end());
+        std::cout << "Copy history" << std::endl;
         segmentHistory.erase(segmentHistory.begin() + toCheck, segmentHistory.end());
+        std::cout << "Erase history" << std::endl;
         recreateCanvas();
     }
     if (!hasUnsavedChanges && changed) {
