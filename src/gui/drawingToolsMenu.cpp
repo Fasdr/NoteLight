@@ -3,6 +3,7 @@
 
 DrawingToolsMenu::DrawingToolsMenu(QWidget* parent) : QWidget(parent),
             menuLayout(this),
+            contentButton("⫶☰", this),
             positionControl(this),
             changeFullScreenButton("⛶", this),
             undoButton("↩", this),
@@ -18,7 +19,10 @@ DrawingToolsMenu::DrawingToolsMenu(QWidget* parent) : QWidget(parent),
             penWidthDialog(this),
             zoomControl(this) {
     
-    menuLayout.addWidget(&positionControl, 0, Qt::AlignCenter);
+    menuLayout.addLayout(&contentPositionLayout);
+    contentPositionLayout.addLayout(&contentLayout);
+    contentLayout.addWidget(&contentButton);
+    contentPositionLayout.addWidget(&positionControl, 0, Qt::AlignCenter);
 
     menuLayout.addLayout(&fullScreenUndoRedoLayout);
 

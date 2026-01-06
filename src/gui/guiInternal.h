@@ -136,6 +136,9 @@ class DrawingToolsMenu : public QWidget {
 
     private:
         QVBoxLayout menuLayout;
+        QHBoxLayout contentPositionLayout;
+        QVBoxLayout contentLayout;
+        QPushButton contentButton;
         PositionControl positionControl;
         QHBoxLayout fullScreenUndoRedoLayout;
         QPushButton changeFullScreenButton;
