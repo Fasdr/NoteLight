@@ -158,7 +158,7 @@ void WritingArea::undoLastSegments() {
 
         std::copy(segments.end() - qty, segments.end(), std::back_inserter(qInternalStoreRedo[idx]));
         segments.erase(segments.end() - qty, segments.end());
-        std::cout << qInternalStoreRedo[idx].size() << std::endl;
+        std::cout << "Idx: " << idx << " #elements: " << qInternalStoreRedo[idx].size() << std::endl;
 
         toCheck -= 2;
         changed = true;
