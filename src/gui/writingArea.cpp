@@ -153,28 +153,18 @@ void WritingArea::undoLastSegments() {
     bool changed{false};
     auto toCheck{segmentHistory.size() - 1};
     while (toCheck != -1 && segmentHistory[toCheck] != segmentSeparator) {
-        std::cout << "Moving segments" << std::endl;
         int idx{segmentHistory[toCheck]}, qty{segmentHistory[toCheck - 1]};
         auto& segments{qInternalStore[idx]};
 
-        // std::copy(segments.end() - qty, segments.end(), qInternalStoreRedo[idx].end());
-        // std::cout << "Copy segments" << std::endl;
+        std::copy(segments.end() - qty, segments.end(), std::back_inserter(qInternalStoreRedo[idx]));
         segments.erase(segments.end() - qty, segments.end());
-        std::cout << "Erase segments" << std::endl;
 
         toCheck -= 2;
         changed = true;
     }
     if (changed) {
-        std::cout << "Moving history" << std::endl;
-        // segmentHistoryRedo.append(segmentHistory.mid(toCheck));
-        // for (auto it = segmentHistory.begin() + toCheck; it < segmentHistory.end(); ++it) {
-        //     segmentHistoryRedo.push_back(*it);
-        // }
         std::copy(segmentHistory.begin() + toCheck, segmentHistory.end(), std::back_inserter(segmentHistoryRedo));
-        std::cout << "Copy history" << std::endl;
         segmentHistory.erase(segmentHistory.begin() + toCheck, segmentHistory.end());
-        std::cout << "Erase history" << std::endl;
         recreateCanvas();
     }
     if (!hasUnsavedChanges && changed) {
@@ -190,14 +180,14 @@ void WritingArea::redoLastSegments() {
         int idx{segmentHistoryRedo[toCheck]}, qty{segmentHistoryRedo[toCheck - 1]};
         auto& segments{qInternalStoreRedo[idx]};
 
-        std::copy(segments.end() - qty, segments.end(), qInternalStore[idx].end());
+        std::copy(segments.end() - qty, segments.end(), std::back_inserter(qInternalStore[idx]));
         segments.erase(segments.end() - qty, segments.end());
 
         toCheck -= 2;
         changed = true;
     }
     if (changed) {
-        std::copy(segmentHistoryRedo.begin() + toCheck, segmentHistoryRedo.end(), segmentHistory.end());
+        std::copy(segmentHistoryRedo.begin() + toCheck, segmentHistoryRedo.end(), std::back_inserter(segmentHistory));
         segmentHistory.erase(segmentHistoryRedo.begin() + toCheck, segmentHistoryRedo.end());
         recreateCanvas();
     }
