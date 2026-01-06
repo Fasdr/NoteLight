@@ -158,21 +158,14 @@ void WritingArea::undoLastSegments() {
 
         std::copy(segments.end() - qty, segments.end(), std::back_inserter(qInternalStoreRedo[idx]));
         segments.erase(segments.end() - qty, segments.end());
+        std::cout << qInternalStoreRedo[idx].size() << std::endl;
 
         toCheck -= 2;
         changed = true;
     }
     if (changed) {
-        for (int elem : segmentHistory) {
-            std::cout << elem << " ";
-        }
-        std::cout << std::endl;
         std::copy(segmentHistory.begin() + toCheck, segmentHistory.end(), std::back_inserter(segmentHistoryRedo));
         segmentHistory.erase(segmentHistory.begin() + toCheck, segmentHistory.end());
-        for (int elem : segmentHistoryRedo) {
-            std::cout << elem << " ";
-        }
-        std::cout << std::endl;
         recreateCanvas();
     }
     if (!hasUnsavedChanges && changed) {
