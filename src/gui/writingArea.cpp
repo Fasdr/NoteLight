@@ -154,12 +154,14 @@ void WritingArea::undoLastSegments() {
         int idx{segmentHistory[toCheck]}, qty{segmentHistory[toCheck - 1]};
         auto& segments{qInternalStore[idx]};
 
+        std::copy(segments.end() - qty, segments.end(), qInternalStoreRedo[idx].end());
         segments.erase(segments.end() - qty, segments.end());
 
         toCheck -= 2;
         changed = true;
     }
     if (changed) {
+        std::copy(segmentHistory.begin() + toCheck, segmentHistory.end(), segmentHistoryRedo.end());
         segmentHistory.erase(segmentHistory.begin() + toCheck, segmentHistory.end());
         recreateCanvas();
     }
@@ -170,7 +172,27 @@ void WritingArea::undoLastSegments() {
 }
 
 void WritingArea::redoLastSegments() {
+    bool changed{false};
+    auto toCheck{segmentHistoryRedo.size() - 1};
+    while (toCheck != -1 && segmentHistoryRedo[toCheck] != segmentSeparator) {
+        int idx{segmentHistoryRedo[toCheck]}, qty{segmentHistoryRedo[toCheck - 1]};
+        auto& segments{qInternalStoreRedo[idx]};
 
+        std::copy(segments.end() - qty, segments.end(), qInternalStore[idx].end());
+        segments.erase(segments.end() - qty, segments.end());
+
+        toCheck -= 2;
+        changed = true;
+    }
+    if (changed) {
+        std::copy(segmentHistoryRedo.begin() + toCheck, segmentHistoryRedo.end(), segmentHistory.end());
+        segmentHistory.erase(segmentHistoryRedo.begin() + toCheck, segmentHistoryRedo.end());
+        recreateCanvas();
+    }
+    if (!hasUnsavedChanges && changed) {
+        hasUnsavedChanges = true;
+        emit changeMade();
+    }
 }
 
 // void WritingArea::mousePressEvent(QMouseEvent *event) {

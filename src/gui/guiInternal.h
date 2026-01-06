@@ -222,6 +222,8 @@ class WritingArea : public QWidget{
         QColor canvasBackgroundColor{0, 0, 0};
 
         QList<int> segmentHistory;
+        QMap<qint32, QList<LineSegment>> qInternalStoreRedo;
+        QList<int> segmentHistoryRedo;
         void incrementSegmentHistory(int idx);
         void undoLastSegments();
         void redoLastSegments();
