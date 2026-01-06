@@ -165,7 +165,10 @@ void WritingArea::undoLastSegments() {
     }
     if (changed) {
         std::cout << "Moving history" << std::endl;
-        std::copy(segmentHistory.begin() + toCheck, segmentHistory.end(), segmentHistoryRedo.end());
+        for (auto it = segmentHistory.begin() + toCheck; it < segmentHistory.end(); ++it) {
+            segmentHistoryRedo.push_back(*it);
+        }
+        // std::copy(segmentHistory.begin() + toCheck, segmentHistory.end(), segmentHistoryRedo.end());
         std::cout << "Copy history" << std::endl;
         segmentHistory.erase(segmentHistory.begin() + toCheck, segmentHistory.end());
         std::cout << "Erase history" << std::endl;
