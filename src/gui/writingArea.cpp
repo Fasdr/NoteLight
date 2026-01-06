@@ -159,8 +159,11 @@ void WritingArea::undoLastSegments() {
         toCheck -= 2;
         changed = true;
     }
-    if (!hasUnsavedChanges && changed) {
+    if (changed) {
+        segmentHistory.erase(segmentHistory.begin() + toCheck, segmentHistory.end());
         recreateCanvas();
+    }
+    if (!hasUnsavedChanges && changed) {
         hasUnsavedChanges = true;
         emit changeMade();
     }
