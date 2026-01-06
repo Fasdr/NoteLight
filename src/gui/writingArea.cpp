@@ -163,8 +163,16 @@ void WritingArea::undoLastSegments() {
         changed = true;
     }
     if (changed) {
+        for (int elem : segmentHistory) {
+            std::cout << elem << " ";
+        }
+        std::cout << std::endl;
         std::copy(segmentHistory.begin() + toCheck, segmentHistory.end(), std::back_inserter(segmentHistoryRedo));
         segmentHistory.erase(segmentHistory.begin() + toCheck, segmentHistory.end());
+        for (int elem : segmentHistoryRedo) {
+            std::cout << elem << " ";
+        }
+        std::cout << std::endl;
         recreateCanvas();
     }
     if (!hasUnsavedChanges && changed) {
