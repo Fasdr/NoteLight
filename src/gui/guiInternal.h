@@ -124,6 +124,8 @@ class DrawingToolsMenu : public QWidget {
         PenWidthSliderDialog* getPenWidthSliderDialog();
 
         QPushButton* getChangeFullScreenButton();
+        QPushButton* getUndoButton();
+        QPushButton* getRedoButton();
 
         SimpleColorDialog backgroundColorDialog;
         SimpleColorDialog penColorDialog;
@@ -135,7 +137,10 @@ class DrawingToolsMenu : public QWidget {
     private:
         QVBoxLayout menuLayout;
         PositionControl positionControl;
+        QHBoxLayout fullScreenUndoRedoLayout;
         QPushButton changeFullScreenButton;
+        QPushButton undoButton;
+        QPushButton redoButton;
         QHBoxLayout drawingControlsLayout;
         QPushButton backgroundColorButton;
         QVBoxLayout backgroundColorButtonLayout;
@@ -218,6 +223,8 @@ class WritingArea : public QWidget{
 
         QList<int> segmentHistory;
         void incrementSegmentHistory(int idx);
+        void undoLastSegments();
+        void redoLastSegments();
 
         int processSegment(QPointF startPoint, QPointF finishPoint);
         int recreateCanvas();

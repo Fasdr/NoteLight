@@ -30,6 +30,12 @@ WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
     connect(drawingToolsMenu.getPositionControl(), &PositionControl::scrollRequested,
             this, &WritingArea::updateScroll);
 
+    connect(drawingToolsMenu.getUndoButton(), &QPushButton::clicked,
+            this, &WritingArea::undoLastSegments);
+
+    connect(drawingToolsMenu.getRedoButton(), &QPushButton::clicked,
+            this, &WritingArea::redoLastSegments);
+
     connect(drawingToolsMenu.getBackgroundColorDialog(), &SimpleColorDialog::colorUpdated,
             this, &WritingArea::updateBackgroundColor);
 
@@ -139,6 +145,29 @@ void WritingArea::incrementSegmentHistory(int idx) {
     }
     segmentHistory.push_back(1);
     segmentHistory.push_back(idx);
+}
+
+void WritingArea::undoLastSegments() {
+    bool changed{false};
+    auto toCheck{segmentHistory.size() - 1};
+    while (toCheck != -1 && segmentHistory[toCheck] != segmentSeparator) {
+        int idx{segmentHistory[toCheck]}, qty{segmentHistory[toCheck - 1]};
+        auto& segments{qInternalStore[idx]};
+
+        segments.erase(segments.end() - qty, segments.end());
+
+        toCheck -= 2;
+        changed = true;
+    }
+    if (!hasUnsavedChanges && changed) {
+        recreateCanvas();
+        hasUnsavedChanges = true;
+        emit changeMade();
+    }
+}
+
+void WritingArea::redoLastSegments() {
+
 }
 
 // void WritingArea::mousePressEvent(QMouseEvent *event) {

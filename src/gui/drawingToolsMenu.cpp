@@ -5,6 +5,8 @@ DrawingToolsMenu::DrawingToolsMenu(QWidget* parent) : QWidget(parent),
             menuLayout(this),
             positionControl(this),
             changeFullScreenButton("⛶", this),
+            undoButton("↩", this),
+            redoButton("↪", this),
             // backgroundColorButton("🌆", this),
             backgroundColorButtonLabel("🛤️"),
             backgroundColorDialog(15, this),
@@ -17,7 +19,13 @@ DrawingToolsMenu::DrawingToolsMenu(QWidget* parent) : QWidget(parent),
             zoomControl(this) {
     
     menuLayout.addWidget(&positionControl, 0, Qt::AlignCenter);
-    menuLayout.addWidget(&changeFullScreenButton);
+
+    menuLayout.addLayout(&fullScreenUndoRedoLayout);
+
+    fullScreenUndoRedoLayout.addWidget(&changeFullScreenButton);
+    fullScreenUndoRedoLayout.addWidget(&undoButton);
+    fullScreenUndoRedoLayout.addWidget(&redoButton);
+
 
     menuLayout.addLayout(&drawingControlsLayout);
     
@@ -89,6 +97,14 @@ DrawingToolsMenu::~DrawingToolsMenu() {
 
 QPushButton* DrawingToolsMenu::getChangeFullScreenButton() {
     return &changeFullScreenButton;
+}
+
+QPushButton* DrawingToolsMenu::getUndoButton() {
+    return &undoButton;
+}
+
+QPushButton* DrawingToolsMenu::getRedoButton() {
+    return &redoButton;
 }
 
 
