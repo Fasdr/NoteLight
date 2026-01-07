@@ -4,6 +4,7 @@
 DrawingToolsMenu::DrawingToolsMenu(QWidget* parent) : QWidget(parent),
             menuLayout(this),
             contentButton("⫶☰", this),
+            contentDialog(this),
             positionControl(this),
             changeFullScreenButton("⛶", this),
             undoButton("↩", this),
@@ -75,6 +76,9 @@ DrawingToolsMenu::DrawingToolsMenu(QWidget* parent) : QWidget(parent),
 
     penWidthButtonLabel.setMargin(5);
 
+    connect(&contentButton, &QPushButton::clicked,
+        this, &DrawingToolsMenu::startContentDialog);
+
     connect(&backgroundColorButton, &QPushButton::clicked,
         this, &DrawingToolsMenu::startBackgroundColorDialog);
 
@@ -111,6 +115,9 @@ QPushButton* DrawingToolsMenu::getRedoButton() {
     return &redoButton;
 }
 
+void DrawingToolsMenu::startContentDialog() {
+    contentDialog.show();
+}
 
 void DrawingToolsMenu::startBackgroundColorDialog() {
     backgroundColorDialog.show();

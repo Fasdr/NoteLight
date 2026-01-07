@@ -312,14 +312,19 @@ void WritingArea::loadFileSession(QString currentWorkingFile) {
     QString zoomKey = "Files/" + fileName + "/Zoom";
     if (appSession.contains(zoomKey)) {
         zoom = appSession.value(zoomKey).value<double>();
-        drawingToolsMenu.getZoomControl()->setZoomValue(static_cast<int>(100 * zoom));
+    } else {
+        zoom = 1.0;
     }
+    drawingToolsMenu.getZoomControl()->setZoomValue(static_cast<int>(100 * zoom));
 
     QString originKey = "Files/" + fileName + "/Origin";
     if (appSession.contains(originKey)) {
         QPointF xy = appSession.value(originKey).value<QPointF>();
         xOrigin = xy.x();
         yOrigin = xy.y();
+    } else {
+        xOrigin = 0;
+        yOrigin = 0;
     }
 
     QString penKey = "Files/" + fileName + "/Pen";

@@ -22,6 +22,7 @@ qt_add_library(guiInternal
     simpleColorDialog.cpp
     penWidthSliderDialog.cpp
     positionControl.cpp
+    contentDialog.cpp
 )
 
 target_sources(guiInternal

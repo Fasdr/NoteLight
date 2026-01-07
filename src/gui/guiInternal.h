@@ -16,6 +16,7 @@
 #include <QLabel>
 #include <QSlider>
 #include <QDataStream>
+#include <QTreeWidget>
 
 #include <QMap>
 #include <QList>
@@ -44,6 +45,17 @@ class PositionControl : public QWidget {
         QPointF previousPoint;
         double traveledDistance{0};
         QPointF applyAcceleration(QPointF newPoint);
+};
+
+class ContentDialog : public QDialog {
+    Q_OBJECT
+    public:
+        ContentDialog(QWidget* parent = nullptr);
+        ~ContentDialog();
+
+    private:
+        QVBoxLayout conentDialogLayout;
+        QTreeWidget contentTree;
 };
 
 class PenWidthSliderDialog : public QDialog {
@@ -139,6 +151,7 @@ class DrawingToolsMenu : public QWidget {
         QHBoxLayout contentPositionLayout;
         QVBoxLayout contentLayout;
         QPushButton contentButton;
+        ContentDialog contentDialog;
         PositionControl positionControl;
         QHBoxLayout fullScreenUndoRedoLayout;
         QPushButton changeFullScreenButton;
@@ -156,6 +169,7 @@ class DrawingToolsMenu : public QWidget {
         QLabel penWidthButtonLabel;
         PenWidthSliderDialog penWidthDialog;
         ZoomControl zoomControl;
+        void startContentDialog();
         void startBackgroundColorDialog();
         void startPenColorDialog();
         void startPenWidthDialog();

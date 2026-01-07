@@ -84,6 +84,7 @@ void MainWindow::newFile() {
         return;
     }
     QMap<qint32, QList<LineSegment>> data;
+    writingArea.loadFileSession("");
     writingArea.setQInternalStore(std::move(data));
     currentWorkingFile = "";
     configureTitle();
