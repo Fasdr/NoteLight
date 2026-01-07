@@ -6,10 +6,15 @@ ContentDialog::ContentDialog(QWidget* parent) : QDialog(parent),
     conentDialogLayout.addWidget(&contentTree);
     contentTree.setColumnCount(1);
     contentTree.setHeaderLabel("Name");
+    
+    contentTree.setIndentation(50);
+    
+
     contentTree.setAcceptDrops(true);
     contentTree.setDragEnabled(true);
     contentTree.setDragDropMode(QAbstractItemView::InternalMove);
     contentTree.setDragDropOverwriteMode(false);
+
     for (auto i{0}; i < 10; ++i) {
         QTreeWidgetItem* top = new QTreeWidgetItem(&contentTree);
         top->setText(0, QString("Test%1").arg(i));
