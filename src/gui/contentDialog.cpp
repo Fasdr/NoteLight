@@ -5,11 +5,12 @@ ContentDialog::ContentDialog(QWidget* parent) : QDialog(parent),
             conentDialogLayout(this) {
     conentDialogLayout.addWidget(&contentTree);
     contentTree.setColumnCount(1);
-    contentTree.setHeaderLabel("Name");
+    contentTree.setHeaderLabel("Title");
     
-    contentTree.setIndentation(50);
+    contentTree.setIndentation(75);
     
-
+    setTreeSize();
+    
     contentTree.setAcceptDrops(true);
     contentTree.setDragEnabled(true);
     contentTree.setDragDropMode(QAbstractItemView::InternalMove);
@@ -25,5 +26,11 @@ ContentDialog::ContentDialog(QWidget* parent) : QDialog(parent),
 }
 
 ContentDialog::~ContentDialog() {
+
+}
+
+void ContentDialog::setTreeSize() {
+    contentTree.setMinimumSize(QGuiApplication::primaryScreen()->geometry().width() / 4,
+                               QGuiApplication::primaryScreen()->geometry().height() / 2);
 
 }

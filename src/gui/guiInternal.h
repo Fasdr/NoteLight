@@ -52,10 +52,13 @@ class ContentDialog : public QDialog {
     public:
         ContentDialog(QWidget* parent = nullptr);
         ~ContentDialog();
+        
+        void setTreeSize();
 
     private:
         QVBoxLayout conentDialogLayout;
         QTreeWidget contentTree;
+
 };
 
 class PenWidthSliderDialog : public QDialog {

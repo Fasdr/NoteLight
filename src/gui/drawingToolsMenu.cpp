@@ -116,6 +116,7 @@ QPushButton* DrawingToolsMenu::getRedoButton() {
 }
 
 void DrawingToolsMenu::startContentDialog() {
+    contentDialog.setTreeSize();
     contentDialog.show();
 }
 
