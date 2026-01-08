@@ -116,20 +116,37 @@ QPushButton* DrawingToolsMenu::getRedoButton() {
 }
 
 void DrawingToolsMenu::startContentDialog() {
-    contentDialog.setTreeSize();
-    contentDialog.show();
+    if (contentDialog.isVisible()) {
+        contentDialog.close();
+    } else {
+        contentDialog.setTreeSize();
+        contentDialog.show();
+    }
+    
 }
 
 void DrawingToolsMenu::startBackgroundColorDialog() {
-    backgroundColorDialog.show();
+    if (backgroundColorDialog.isVisible()) {
+        backgroundColorDialog.close();
+    } else {
+        backgroundColorDialog.show();
+    }
 }
 
 void DrawingToolsMenu::startPenColorDialog() {
-    penColorDialog.show();
+    if (penColorDialog.isVisible()) {
+        penColorDialog.close();
+    } else {
+        penColorDialog.show();
+    }
 }
 
 void DrawingToolsMenu::startPenWidthDialog() {
-    penWidthDialog.show();
+    if (penWidthDialog.isVisible()) {
+        penWidthDialog.close();
+    } else {
+        penWidthDialog.show();
+    }
 }
 
 PositionControl* DrawingToolsMenu::getPositionControl() {
