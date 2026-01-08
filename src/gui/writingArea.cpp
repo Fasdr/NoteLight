@@ -32,6 +32,12 @@ WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
     connect(drawingToolsMenu.getPositionControl(), &PositionControl::scrollRequested,
             this, &WritingArea::updateScroll);
 
+    connect(drawingToolsMenu.getContentDialog()->getContentTree(), &QTreeWidget::itemClicked,
+            this, &WritingArea::moveToPosition);
+
+    connect(drawingToolsMenu.getContentDialog(), &ContentDialog::positionItemCreated,
+            this, &WritingArea::storePosition);
+
     connect(drawingToolsMenu.getUndoButton(), &QPushButton::clicked,
             this, &WritingArea::undoLastSegments);
 
@@ -339,6 +345,26 @@ void WritingArea::loadFileSession(QString currentWorkingFile) {
         canvasBackgroundColor = appSession.value(backgroundColorKey).value<QColor>();
         drawingToolsMenu.backgroundColorDialog.setColor(canvasBackgroundColor);
     }
+}
+
+void WritingArea::storePosition(QTreeWidgetItem* itemToStore) {
+    itemToStore->setData(1, Qt::UserRole, xOrigin);
+    itemToStore->setData(2, Qt::UserRole, yOrigin);
+    itemToStore->setData(3, Qt::UserRole, zoom);
+}
+
+void WritingArea::moveToPosition(QTreeWidgetItem* itemToMoveTo, int column) {
+    double xOriginNew{itemToMoveTo->data(1, Qt::UserRole).toFloat()},
+           yOriginNew{itemToMoveTo->data(2, Qt::UserRole).toFloat()},
+           zoomNew{itemToMoveTo->data(3, Qt::UserRole).toFloat()};
+
+    zoom = zoomNew;
+    drawingToolsMenu.getZoomControl()->setZoomValue(static_cast<int>(100 * zoom));
+
+    xOrigin = xOriginNew;
+    yOrigin = yOriginNew;
+
+    recreateCanvas();
 }
 
 void WritingArea::saveFileSession(QString currentWorkingFile) {

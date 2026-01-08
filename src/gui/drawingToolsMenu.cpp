@@ -3,7 +3,7 @@
 
 DrawingToolsMenu::DrawingToolsMenu(QWidget* parent) : QWidget(parent),
             menuLayout(this),
-            contentButton("⫶☰", this),
+            contentButton("🗃️", this),
             contentDialog(this),
             positionControl(this),
             changeFullScreenButton("⛶", this),
@@ -135,6 +135,11 @@ void DrawingToolsMenu::startPenWidthDialog() {
 PositionControl* DrawingToolsMenu::getPositionControl() {
     return &positionControl;
 }
+
+ContentDialog* DrawingToolsMenu::getContentDialog() {
+    return &contentDialog;
+}
+
 
 ZoomControl* DrawingToolsMenu::getZoomControl() {
     return &zoomControl;

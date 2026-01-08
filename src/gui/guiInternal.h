@@ -17,6 +17,7 @@
 #include <QSlider>
 #include <QDataStream>
 #include <QTreeWidget>
+#include <QLineEdit>
 
 #include <QMap>
 #include <QList>
@@ -52,13 +53,26 @@ class ContentDialog : public QDialog {
     public:
         ContentDialog(QWidget* parent = nullptr);
         ~ContentDialog();
-        
+
+        void updatedRootName(QString currentWorkingFile);
+        QTreeWidget* getContentTree();
+
         void setTreeSize();
 
-    private:
-        QVBoxLayout conentDialogLayout;
-        QTreeWidget contentTree;
+    signals:
+        void positionItemCreated(QTreeWidgetItem* itemToStore);
 
+    private:
+        QVBoxLayout contentDialogLayout;
+        QTreeWidget contentTree;
+        QTreeWidgetItem currentRoot;
+        QHBoxLayout entryLayout;
+        QLineEdit newItemLineEdit;
+        QPushButton createItemButton;
+        QPushButton removeItemButton;
+
+        void addNewItem();
+        void removeSelectedItem();
 };
 
 class PenWidthSliderDialog : public QDialog {
@@ -133,6 +147,7 @@ class DrawingToolsMenu : public QWidget {
         DrawingToolsMenu(QWidget* parent = nullptr);
         ~DrawingToolsMenu();
         PositionControl* getPositionControl();
+        ContentDialog* getContentDialog();
         ZoomControl* getZoomControl();
         SimpleColorDialog* getBackgroundColorDialog();
         SimpleColorDialog* getPenColorDialog();
@@ -212,9 +227,9 @@ class WritingArea : public QWidget{
 
     protected:
         // void mousePressEvent(QMouseEvent *event) override;
-        void tabletEvent(QTabletEvent *event) override;
-        void paintEvent(QPaintEvent *event) override;
-        void resizeEvent(QResizeEvent *event) override;
+        void tabletEvent(QTabletEvent* event) override;
+        void paintEvent(QPaintEvent* event) override;
+        void resizeEvent(QResizeEvent* event) override;
 
     public slots:
         void updateScroll(QPointF delta);
@@ -222,7 +237,8 @@ class WritingArea : public QWidget{
         void updatePenColor(QColor newColor);
         void updatePenWidth(int newWidth);
         void updateZoom(int newZoomValue);
-
+        void moveToPosition(QTreeWidgetItem* itemToMoveTo, int column);
+        void storePosition(QTreeWidgetItem* itemToStore);
 
     signals:
         void changeMade();

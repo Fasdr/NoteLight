@@ -88,6 +88,7 @@ void MainWindow::newFile() {
     writingArea.setQInternalStore(std::move(data));
     currentWorkingFile = "";
     configureTitle();
+    writingArea.getDrawingToolsMenu()->getContentDialog()->updatedRootName(currentWorkingFile);
 }
 
 void MainWindow::openFile() {
@@ -133,6 +134,7 @@ void MainWindow::openFile() {
     writingArea.loadFileSession(currentWorkingFile);
     writingArea.setQInternalStore(std::move(data));
     configureTitle();
+    writingArea.getDrawingToolsMenu()->getContentDialog()->updatedRootName(currentWorkingFile);
 }
 
 void MainWindow::saveFile() {
@@ -193,6 +195,7 @@ void MainWindow::saveFileAs() {
     writingArea.setHasUnsavedChanges(false);
     currentWorkingFile = fileName;
     configureTitle();
+    writingArea.getDrawingToolsMenu()->getContentDialog()->updatedRootName(currentWorkingFile);
 }
 
 void MainWindow::loadSession() {
@@ -203,6 +206,7 @@ void MainWindow::loadSession() {
     }
     if (currentWorkingFile.isEmpty()) {
         configureTitle();
+        writingArea.getDrawingToolsMenu()->getContentDialog()->updatedRootName(currentWorkingFile);
         return;
     }
     QFile file(currentWorkingFile);
@@ -210,6 +214,7 @@ void MainWindow::loadSession() {
         std::cout << "Loading... Cannot open file: " << file.errorString().toStdString() << std::endl;
         currentWorkingFile = "";
         configureTitle();
+        writingArea.getDrawingToolsMenu()->getContentDialog()->updatedRootName(currentWorkingFile);
         return;
     }
 
@@ -231,6 +236,7 @@ void MainWindow::loadSession() {
     writingArea.loadFileSession(currentWorkingFile);
     writingArea.setQInternalStore(std::move(data));
     configureTitle();
+    writingArea.getDrawingToolsMenu()->getContentDialog()->updatedRootName(currentWorkingFile);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
