@@ -122,19 +122,34 @@ void MainWindow::openFile() {
     QDataStream input(&file);
     quint32 fileVersionBig, fileVersionSmall;
     input >> fileVersionBig >> fileVersionSmall;
-    if (fileVersionBig != 0 || fileVersionSmall != 5) {
+
+    if (fileVersionBig == 0 && fileVersionSmall == 5) {
+        input.setVersion(QDataStream::Qt_6_10);
+        QMap<qint32, QList<LineSegment>> data;
+        input >> data;
+        currentWorkingFile = fileName;
+        writingArea.loadFileSession(currentWorkingFile);
+        writingArea.setQInternalStore(std::move(data));
+        configureTitle();
+        writingArea.getDrawingToolsMenu()->getContentDialog()->updatedRootName(currentWorkingFile);
+        file.close();
+    } else if (fileVersionBig == 1 && fileVersionSmall == 0) {
+        input.setVersion(QDataStream::Qt_6_10);
+        QMap<qint32, QList<LineSegment>> data;
+        input >> data;
+        currentWorkingFile = fileName;
+        writingArea.loadFileSession(currentWorkingFile);
+        writingArea.setQInternalStore(std::move(data));
+        configureTitle();
+        writingArea.getDrawingToolsMenu()->getContentDialog()->updatedRootName(currentWorkingFile);
+        writingArea.getDrawingToolsMenu()->getContentDialog()->deserializeContentTree(input);
+        file.close();
+    } else {
+        file.close();
         std::cout << "File version is "<< fileVersionBig << "." << fileVersionSmall << std::endl;
         QMessageBox::warning(this, "Warning", "This file version is not supported!");
         return;
     }
-    input.setVersion(QDataStream::Qt_6_10);
-    QMap<qint32, QList<LineSegment>> data;
-    input >> data;
-    currentWorkingFile = fileName;
-    writingArea.loadFileSession(currentWorkingFile);
-    writingArea.setQInternalStore(std::move(data));
-    configureTitle();
-    writingArea.getDrawingToolsMenu()->getContentDialog()->updatedRootName(currentWorkingFile);
 }
 
 void MainWindow::saveFile() {
@@ -154,6 +169,8 @@ void MainWindow::saveFile() {
     output << versionBig << versionSmall;
     output.setVersion(QDataStream::Qt_6_10);
     output << writingArea.getQInternalStore();
+    writingArea.getDrawingToolsMenu()->getContentDialog()->serializeContentTree(output);
+    
     file.close();
     writingArea.setHasUnsavedChanges(false);
     configureTitle();
@@ -191,6 +208,8 @@ void MainWindow::saveFileAs() {
     output << versionBig << versionSmall;
     output.setVersion(QDataStream::Qt_6_10);
     output << writingArea.getQInternalStore();
+    writingArea.getDrawingToolsMenu()->getContentDialog()->serializeContentTree(output);
+
     file.close();
     writingArea.setHasUnsavedChanges(false);
     currentWorkingFile = fileName;
@@ -222,21 +241,33 @@ void MainWindow::loadSession() {
     quint32 fileVersionBig, fileVersionSmall;
     input >> fileVersionBig >> fileVersionSmall;
 
-    if (fileVersionBig != 0 || fileVersionSmall != 5) {
+    if (fileVersionBig == 0 && fileVersionSmall == 5) {
+        input.setVersion(QDataStream::Qt_6_10);
+        QMap<qint32, QList<LineSegment>> data;
+        input >> data;
+        writingArea.loadFileSession(currentWorkingFile);
+        writingArea.setQInternalStore(std::move(data));
+        configureTitle();
+        writingArea.getDrawingToolsMenu()->getContentDialog()->updatedRootName(currentWorkingFile);
+        file.close();
+    } else if (fileVersionBig == 1 && fileVersionSmall == 0) {
+        input.setVersion(QDataStream::Qt_6_10);
+        QMap<qint32, QList<LineSegment>> data;
+        input >> data;
+        writingArea.loadFileSession(currentWorkingFile);
+        writingArea.setQInternalStore(std::move(data));
+        configureTitle();
+        writingArea.getDrawingToolsMenu()->getContentDialog()->updatedRootName(currentWorkingFile);
+        writingArea.getDrawingToolsMenu()->getContentDialog()->deserializeContentTree(input);
+        file.close();
+    } else {
+        file.close();
         std::cout << "File version is "<< fileVersionBig << "." << fileVersionSmall << std::endl;
         QMessageBox::warning(this, "Warning", "This file version is not supported!");
         currentWorkingFile = "";
         configureTitle();
         return;
     }
-    input.setVersion(QDataStream::Qt_6_10);
-    QMap<qint32, QList<LineSegment>> data;
-    input >> data;
-
-    writingArea.loadFileSession(currentWorkingFile);
-    writingArea.setQInternalStore(std::move(data));
-    configureTitle();
-    writingArea.getDrawingToolsMenu()->getContentDialog()->updatedRootName(currentWorkingFile);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {

@@ -38,6 +38,9 @@ WritingArea::WritingArea(QWidget* parent) : QWidget(parent),
     connect(drawingToolsMenu.getContentDialog(), &ContentDialog::positionItemCreated,
             this, &WritingArea::storePosition);
 
+    connect(drawingToolsMenu.getContentDialog(), &ContentDialog::positionItemRemoved,
+            this, &WritingArea::contentTreeItemDeleted);
+
     connect(drawingToolsMenu.getUndoButton(), &QPushButton::clicked,
             this, &WritingArea::undoLastSegments);
 
@@ -351,6 +354,18 @@ void WritingArea::storePosition(QTreeWidgetItem* itemToStore) {
     itemToStore->setData(1, Qt::UserRole, xOrigin);
     itemToStore->setData(2, Qt::UserRole, yOrigin);
     itemToStore->setData(3, Qt::UserRole, zoom);
+    if (!hasUnsavedChanges) {
+        hasUnsavedChanges = true;
+        emit changeMade();
+    }
+    
+}
+
+void WritingArea::contentTreeItemDeleted() {
+    if (!hasUnsavedChanges) {
+        hasUnsavedChanges = true;
+        emit changeMade();
+    }
 }
 
 void WritingArea::moveToPosition(QTreeWidgetItem* itemToMoveTo, int column) {

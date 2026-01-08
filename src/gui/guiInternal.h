@@ -56,11 +56,13 @@ class ContentDialog : public QDialog {
 
         void updatedRootName(QString currentWorkingFile);
         QTreeWidget* getContentTree();
-
         void setTreeSize();
+        void serializeContentTree(QDataStream& output);
+        void deserializeContentTree(QDataStream& input);
 
     signals:
         void positionItemCreated(QTreeWidgetItem* itemToStore);
+        void positionItemRemoved();
 
     private:
         QVBoxLayout contentDialogLayout;
@@ -239,6 +241,7 @@ class WritingArea : public QWidget{
         void updateZoom(int newZoomValue);
         void moveToPosition(QTreeWidgetItem* itemToMoveTo, int column);
         void storePosition(QTreeWidgetItem* itemToStore);
+        void contentTreeItemDeleted();
 
     signals:
         void changeMade();
@@ -305,7 +308,7 @@ class MainWindow : public QMainWindow {
 
     private:
 
-        quint32 versionBig{0}, versionSmall{5};
+        quint32 versionBig{1}, versionSmall{0};
 
         QSettings appSettings;
         void loadSettings();
