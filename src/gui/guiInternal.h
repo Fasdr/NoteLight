@@ -59,6 +59,7 @@ class ContentDialog : public QDialog {
         void setTreeSize();
         void serializeContentTree(QDataStream& output);
         void deserializeContentTree(QDataStream& input);
+        void clearContentTree();
 
     signals:
         void positionItemCreated(QTreeWidgetItem* itemToStore);

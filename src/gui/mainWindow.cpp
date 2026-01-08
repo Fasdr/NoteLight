@@ -132,6 +132,7 @@ void MainWindow::openFile() {
         writingArea.setQInternalStore(std::move(data));
         configureTitle();
         writingArea.getDrawingToolsMenu()->getContentDialog()->updatedRootName(currentWorkingFile);
+        writingArea.getDrawingToolsMenu()->getContentDialog()->clearContentTree();
         file.close();
     } else if (fileVersionBig == 1 && fileVersionSmall == 0) {
         input.setVersion(QDataStream::Qt_6_10);
@@ -142,6 +143,7 @@ void MainWindow::openFile() {
         writingArea.setQInternalStore(std::move(data));
         configureTitle();
         writingArea.getDrawingToolsMenu()->getContentDialog()->updatedRootName(currentWorkingFile);
+        writingArea.getDrawingToolsMenu()->getContentDialog()->clearContentTree();
         writingArea.getDrawingToolsMenu()->getContentDialog()->deserializeContentTree(input);
         file.close();
     } else {

@@ -50,6 +50,7 @@ void ContentDialog::addNewItem() {
     if (entryName.isEmpty()) {
         return;
     }
+    newItemLineEdit.setText("");
     QTreeWidgetItem* top = new QTreeWidgetItem(&currentRoot);
     top->setText(0, entryName);
     emit positionItemCreated(top);
@@ -115,9 +116,6 @@ void ContentDialog::serializeContentTree(QDataStream& output) {
 }
 
 void ContentDialog::deserializeContentTree(QDataStream& input) {
-    for (QTreeWidgetItem* child : currentRoot.takeChildren()) {
-        delete child;
-    }
     QList<qreal> xOriginVals, yOriginVals, zoomVals;
     input >> xOriginVals >> yOriginVals >> zoomVals;
     QList<QString> textVals;
@@ -141,4 +139,10 @@ void ContentDialog::deserializeContentTree(QDataStream& input) {
     delete[] entries;
 
     currentRoot.setExpanded(true);
+}
+
+void ContentDialog::clearContentTree() {
+    for (QTreeWidgetItem* child : currentRoot.takeChildren()) {
+        delete child;
+    }
 }
