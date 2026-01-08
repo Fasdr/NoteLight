@@ -89,6 +89,7 @@ void MainWindow::newFile() {
     currentWorkingFile = "";
     configureTitle();
     writingArea.getDrawingToolsMenu()->getContentDialog()->updatedRootName(currentWorkingFile);
+    writingArea.getDrawingToolsMenu()->getContentDialog()->clearContentTree();
 }
 
 void MainWindow::openFile() {
