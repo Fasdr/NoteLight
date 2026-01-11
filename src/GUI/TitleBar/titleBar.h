@@ -1,7 +1,7 @@
 #pragma once
 #include <QFrame>
-#include <QPointF>
-
+#include <QHBoxLayout>
+#include <QPushButton>
 
 class TitleBar : public QFrame {
     Q_OBJECT
@@ -9,11 +9,9 @@ class TitleBar : public QFrame {
         TitleBar(QWidget* parent = nullptr);
         ~TitleBar();
 
-    signals:
-        void sendStartDraggingPosition(QPointF startPosition);
-        void sendNewDraggingPosition(QPointF newPosition);
+        QHBoxLayout titleBarLayout;
+        QPushButton exitButton;
 
     protected:
-        void mouseMoveEvent(QMouseEvent* event) override;
         void mousePressEvent(QMouseEvent* event) override;
 };

@@ -2,7 +2,6 @@
 #include <titleBar.h>
 
 #include <QWidget>
-#include <QPointF>
 
 class MainWindow : public QWidget {
     Q_OBJECT
@@ -13,10 +12,14 @@ class MainWindow : public QWidget {
 
         TitleBar titleBar;
 
-    public slots:
-        void acceptStartDraggingPosition(QPointF startDraggingPosition);
-        void acceptNewDraggingPosition(QPointF newDraggingPosition);
-
     protected:
+        void mousePressEvent(QMouseEvent *event) override;
+        void mouseMoveEvent(QMouseEvent *event) override;
+
         void resizeEvent(QResizeEvent* event) override;
+
+        void closeEvent(QCloseEvent *event) override;
+
+    private:
+        void exitApp();
 };
