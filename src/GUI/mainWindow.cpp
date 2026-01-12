@@ -2,13 +2,68 @@
 
 #include <QMouseEvent>
 #include <QWindow>
+#include <QFont>
+#include <QFontDatabase>
+
+#include <QDebug>
+
+void initMyResources() {
+    Q_INIT_RESOURCE(resources);
+}
+
+namespace {
+
+    constexpr int pixelSize{40};
+    inline QFont createPixelFont(int fontSize) {
+        QFont font("FreeSans");
+        font.setPixelSize(fontSize);
+        return font;
+    }
+    QFont appFont{createPixelFont(pixelSize)};
+
+    inline QFont getIconFont() {
+        int fontId{QFontDatabase::addApplicationFont(":/assets/fonts/MaterialIcons-Regular.ttf")};
+        QString familyName;
+        if (fontId == -1) {
+            qDebug() << "Error: Could not load Material Icons!";
+            return QFont();
+        }
+        return QFont(familyName);
+    }
+    QFont iconFont;
+
+    constinit QMap<QString, QVariant> parameters;
+}
 
 MainWindow::MainWindow(QWidget* parent) : QWidget(parent, Qt::FramelessWindowHint),
                                             titleBar(this) {
     setMouseTracking(true);
 
+
+    connect(&titleBar.minimizeButton, &QPushButton::clicked,
+            this, [this]() { this->setWindowState(Qt::WindowMinimized); });
+
+    connect(&titleBar.maximizeButton, &QPushButton::clicked,
+            this, [this]() {
+                // TODO: make maximization smooth
+                if (!this->isFullScreen() && !this->isMaximized()) {
+                    this->setWindowState(Qt::WindowMaximized);
+                } else if (!this->isFullScreen() && this->isMaximized()) {
+                    this->setWindowState(Qt::WindowNoState);
+                }
+            });
+
     connect(&titleBar.exitButton, &QPushButton::clicked,
             this, &MainWindow::exitApp);
+    
+
+    iconFont = getIconFont();
+    // Sets up visual parameters to use in this app
+    
+    iconFont.setPixelSize(appFont.pixelSize());
+    parameters["appFont"] = appFont;
+    parameters["iconFont"] = iconFont;
+    setVisuals(parameters);
 }
 
 MainWindow::~MainWindow() {
@@ -17,17 +72,16 @@ MainWindow::~MainWindow() {
 
 void MainWindow::resizeEvent(QResizeEvent* event) {
     // Sets up the title bar size and its position
-    quint32 titleBarMargin{10};
+    int titleBarMargin{10};
     QSize titleBarSize{size()};
-    // TODO: Should be based on the font size for the app
     titleBarSize.setWidth(titleBarSize.width() - 2 * titleBarMargin);
-    titleBarSize.setHeight(80);
+    titleBarSize.setHeight(iconFont.pixelSize() * 1.5);
     titleBar.setFixedSize(titleBarSize);
     titleBar.move(titleBarMargin, titleBarMargin);
 }
 
 namespace {
-    quint32 resizeMargin{5};
+    int resizeMargin{5};
 
     Qt::Edges getEdges(const QPointF& position, const MainWindow* mainWindow) {
         Qt::Edges edges = Qt::Edges();
@@ -53,7 +107,7 @@ namespace {
     }
 }
 
-void MainWindow::mousePressEvent(QMouseEvent *event) {
+void MainWindow::mousePressEvent(QMouseEvent* event) {
     if (event->button() == Qt::LeftButton) {
         Qt::Edges edges = getEdges(event->position(), this);
         if (edges != Qt::Edges()) {
@@ -83,7 +137,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event) {
     QWidget::mouseMoveEvent(event);
 }
 
-void MainWindow::closeEvent(QCloseEvent *event) {
+void MainWindow::closeEvent(QCloseEvent* event) {
     event->ignore();
     exitApp();
 }

@@ -4,11 +4,13 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 
 qt_standard_project_setup()
 
-qt_add_library(MainWindow)
+qt_add_library(MainWindow
+    resources.qrc)
 
 target_sources(MainWindow
     PRIVATE
         mainWindow.cpp
+        mainWindowVisuals.cpp
     PUBLIC
         FILE_SET HEADERS
         FILES

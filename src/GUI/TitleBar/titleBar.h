@@ -10,7 +10,11 @@ class TitleBar : public QFrame {
         ~TitleBar();
 
         QHBoxLayout titleBarLayout;
+        QPushButton minimizeButton;
+        QPushButton maximizeButton;
         QPushButton exitButton;
+
+        void setVisuals(QMap<QString, QVariant>& paramters);
 
     protected:
         void mousePressEvent(QMouseEvent* event) override;

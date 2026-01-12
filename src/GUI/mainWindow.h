@@ -2,6 +2,8 @@
 #include <titleBar.h>
 
 #include <QWidget>
+#include <QMap>
+#include <QVariant>
 
 class MainWindow : public QWidget {
     Q_OBJECT
@@ -11,6 +13,7 @@ class MainWindow : public QWidget {
         ~MainWindow();
 
         TitleBar titleBar;
+        void setVisuals(QMap<QString, QVariant>& paramters);
 
     protected:
         void mousePressEvent(QMouseEvent *event) override;

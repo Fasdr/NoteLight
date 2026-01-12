@@ -7,6 +7,7 @@ qt_add_library(TitleBar)
 target_sources(TitleBar
     PRIVATE
         titleBar.cpp
+        titleBarVisuals.cpp
     PUBLIC
         FILE_SET HEADERS
         FILES
