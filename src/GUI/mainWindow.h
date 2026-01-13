@@ -19,6 +19,8 @@ class MainWindow : public QWidget {
         void mousePressEvent(QMouseEvent *event) override;
         void mouseMoveEvent(QMouseEvent *event) override;
 
+        void changeEvent(QEvent *event);
+
         void resizeEvent(QResizeEvent* event) override;
 
         void closeEvent(QCloseEvent *event) override;

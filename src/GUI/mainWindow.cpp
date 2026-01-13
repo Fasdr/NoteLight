@@ -4,6 +4,7 @@
 #include <QWindow>
 #include <QFont>
 #include <QFontDatabase>
+#include <QWindowStateChangeEvent>
 
 #include <QDebug>
 
@@ -12,7 +13,6 @@ void initMyResources() {
 }
 
 namespace {
-
     constexpr int pixelSize{40};
     inline QFont createPixelFont(int fontSize) {
         QFont font("FreeSans");
@@ -31,14 +31,35 @@ namespace {
         return QFont(familyName);
     }
     QFont iconFont;
+    QString appTheme("Dark");
 
     constinit QMap<QString, QVariant> parameters;
+
+    bool inFullScreenState{false};
+    bool inMaximizedState{false};
 }
+
+
 
 MainWindow::MainWindow(QWidget* parent) : QWidget(parent, Qt::FramelessWindowHint),
                                             titleBar(this) {
     setMouseTracking(true);
-
+    
+    connect(&titleBar.fullScreenButton, &QPushButton::clicked,
+            this, [this]() {
+                if (inFullScreenState) {
+                    inFullScreenState = false;
+                    if (inMaximizedState) {
+                        this->setWindowState(Qt::WindowMaximized);
+                    } else {
+                        this->setWindowState(Qt::WindowNoState);
+                    }
+                } else {
+                    inMaximizedState = this->isMaximized();
+                    inFullScreenState = true;
+                    this->setWindowState(Qt::WindowFullScreen);
+                }
+            });
 
     connect(&titleBar.minimizeButton, &QPushButton::clicked,
             this, [this]() { this->setWindowState(Qt::WindowMinimized); });
@@ -46,9 +67,10 @@ MainWindow::MainWindow(QWidget* parent) : QWidget(parent, Qt::FramelessWindowHin
     connect(&titleBar.maximizeButton, &QPushButton::clicked,
             this, [this]() {
                 // TODO: make maximization smooth
-                if (!this->isFullScreen() && !this->isMaximized()) {
+                inMaximizedState = !this->isMaximized();
+                if (!inFullScreenState && inMaximizedState) {
                     this->setWindowState(Qt::WindowMaximized);
-                } else if (!this->isFullScreen() && this->isMaximized()) {
+                } else if (!inFullScreenState && !inMaximizedState) {
                     this->setWindowState(Qt::WindowNoState);
                 }
             });
@@ -63,6 +85,7 @@ MainWindow::MainWindow(QWidget* parent) : QWidget(parent, Qt::FramelessWindowHin
     iconFont.setPixelSize(appFont.pixelSize());
     parameters["appFont"] = appFont;
     parameters["iconFont"] = iconFont;
+    parameters["appTheme"] = appTheme;
     setVisuals(parameters);
 }
 
@@ -70,12 +93,27 @@ MainWindow::~MainWindow() {
 
 }
 
+void MainWindow::changeEvent(QEvent *event) {
+    if (event->type() == QEvent::WindowStateChange) {
+        QWindowStateChangeEvent *stateEvent = static_cast<QWindowStateChangeEvent*>(event);
+        if ((stateEvent->oldState() & Qt::WindowMinimized) && !(this->windowState() & Qt::WindowMinimized)) {
+            if (inFullScreenState) {
+                this->setWindowState(Qt::WindowFullScreen);
+            } else if (inMaximizedState) {
+                this->setWindowState(Qt::WindowMaximized);
+            }
+        }
+    }
+    
+    QWidget::changeEvent(event);
+}
+
 void MainWindow::resizeEvent(QResizeEvent* event) {
     // Sets up the title bar size and its position
     int titleBarMargin{10};
     QSize titleBarSize{size()};
     titleBarSize.setWidth(titleBarSize.width() - 2 * titleBarMargin);
-    titleBarSize.setHeight(iconFont.pixelSize() * 1.5);
+    titleBarSize.setHeight(iconFont.pixelSize() * 1.75);
     titleBar.setFixedSize(titleBarSize);
     titleBar.move(titleBarMargin, titleBarMargin);
 }

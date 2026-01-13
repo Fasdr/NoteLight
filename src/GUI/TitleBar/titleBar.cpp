@@ -5,13 +5,11 @@
 
 TitleBar::TitleBar(QWidget* parent) : QFrame(parent),
         titleBarLayout(this) {    
-    setFrameStyle(QFrame::Panel | QFrame::Raised);
-    setLineWidth(1);
-    setMidLineWidth(2);
     
     titleBarLayout.setContentsMargins(5, 0, 5, 0);
     titleBarLayout.setAlignment(Qt::AlignVCenter);
     titleBarLayout.addStretch();
+    titleBarLayout.addWidget(&fullScreenButton);
     titleBarLayout.addWidget(&minimizeButton);
     titleBarLayout.addWidget(&maximizeButton);
     titleBarLayout.addWidget(&exitButton);
