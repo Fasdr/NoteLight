@@ -22,7 +22,9 @@ bool InputArea::event(QEvent* event) {
     }
     QTouchEvent* touchEvent = static_cast<QTouchEvent*>(event);
     if (touchEvent->points().size() >= 4) {
-        qDebug() << touchEvent->points().size();
+        for (const QTouchEvent::TouchPoint& touchPoint : touchEvent->points()) {
+            qDebug() << touchPoint;
+        }
     }
     
 
