@@ -40,7 +40,10 @@ namespace {
 
 MainWindow::MainWindow(QWidget* parent) : QWidget(parent, Qt::FramelessWindowHint),
                                             titleBar(this), inputArea(this) {
-    setMouseTracking(true);
+    
+    
+    // setMouseTracking(true);
+    inputArea.stackUnder(&titleBar);
     
     // TODO: strange behavior fullscreen + maximize + fullscreen = no state
     connect(&titleBar.fullScreenButton, &QPushButton::clicked,
@@ -102,7 +105,7 @@ void MainWindow::resizeEvent(QResizeEvent* event) {
 }
 
 namespace {
-    int resizeMargin{5};
+    int resizeMargin{10};
 
     Qt::Edges getEdges(const QPointF& position, const MainWindow* mainWindow) {
         Qt::Edges edges = Qt::Edges();
@@ -138,25 +141,25 @@ void MainWindow::mousePressEvent(QMouseEvent* event) {
     QWidget::mousePressEvent(event);
 }
 
-void MainWindow::mouseMoveEvent(QMouseEvent *event) {
-    Qt::Edges edges = getEdges(event->position(), this);
-    if (edges == Qt::Edges()) {
-        setCursor(Qt::ArrowCursor);
-    } else if ((edges & Qt::LeftEdge) && (edges & Qt::TopEdge)) {
-        setCursor(Qt::SizeFDiagCursor);
-    } else if ((edges & Qt::RightEdge) && (edges & Qt::BottomEdge)) {
-        setCursor(Qt::SizeFDiagCursor);
-    } else if ((edges & Qt::RightEdge) && (edges & Qt::TopEdge)) {
-        setCursor(Qt::SizeBDiagCursor);
-    } else if ((edges & Qt::LeftEdge) && (edges & Qt::BottomEdge)) {
-        setCursor(Qt::SizeBDiagCursor);
-    } else if (edges & Qt::LeftEdge || edges & Qt::RightEdge) {
-        setCursor(Qt::SizeHorCursor);
-    } else if (edges & Qt::TopEdge || edges & Qt::BottomEdge) {
-        setCursor(Qt::SizeVerCursor);
-    }
-    QWidget::mouseMoveEvent(event);
-}
+// void MainWindow::mouseMoveEvent(QMouseEvent *event) {
+//     Qt::Edges edges = getEdges(event->position(), this);
+//     if (edges == Qt::Edges()) {
+//         setCursor(Qt::ArrowCursor);
+//     } else if ((edges & Qt::LeftEdge) && (edges & Qt::TopEdge)) {
+//         setCursor(Qt::SizeFDiagCursor);
+//     } else if ((edges & Qt::RightEdge) && (edges & Qt::BottomEdge)) {
+//         setCursor(Qt::SizeFDiagCursor);
+//     } else if ((edges & Qt::RightEdge) && (edges & Qt::TopEdge)) {
+//         setCursor(Qt::SizeBDiagCursor);
+//     } else if ((edges & Qt::LeftEdge) && (edges & Qt::BottomEdge)) {
+//         setCursor(Qt::SizeBDiagCursor);
+//     } else if (edges & Qt::LeftEdge || edges & Qt::RightEdge) {
+//         setCursor(Qt::SizeHorCursor);
+//     } else if (edges & Qt::TopEdge || edges & Qt::BottomEdge) {
+//         setCursor(Qt::SizeVerCursor);
+//     }
+//     QWidget::mouseMoveEvent(event);
+// }
 
 void MainWindow::closeEvent(QCloseEvent* event) {
     event->ignore();
