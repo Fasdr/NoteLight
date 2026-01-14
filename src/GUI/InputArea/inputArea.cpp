@@ -21,7 +21,10 @@ bool InputArea::event(QEvent* event) {
         return QWidget::event(event);
     }
     QTouchEvent* touchEvent = static_cast<QTouchEvent*>(event);
-    qDebug() << touchEvent->points().size();
+    if (touchEvent->points().size() >= 4) {
+        qDebug() << touchEvent->points().size();
+    }
+    
 
     event->accept();
     return true;
