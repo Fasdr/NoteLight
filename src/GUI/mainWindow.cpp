@@ -93,6 +93,12 @@ void MainWindow::resizeEvent(QResizeEvent* event) {
     titleBarSize.setHeight(iconFont.pixelSize() * 1.75);
     titleBar.setFixedSize(titleBarSize);
     titleBar.move(titleBarMargin, titleBarMargin);
+
+    // Sets up the input area
+    inputArea.setFixedSize(size());
+    inputArea.move(0, 0);
+
+    QWidget::resizeEvent(event);
 }
 
 namespace {

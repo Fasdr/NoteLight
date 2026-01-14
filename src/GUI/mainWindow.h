@@ -1,5 +1,6 @@
 #pragma once
 #include <titleBar.h>
+#include <inputArea.h>
 
 #include <QWidget>
 #include <QMap>
@@ -13,6 +14,7 @@ class MainWindow : public QWidget {
         ~MainWindow();
 
         TitleBar titleBar;
+        InputArea inputArea;
         void setVisuals(QMap<QString, QVariant>& paramters);
 
     protected:
