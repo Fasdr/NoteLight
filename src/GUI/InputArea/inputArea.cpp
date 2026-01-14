@@ -61,10 +61,10 @@ bool InputArea::event(QEvent* event) {
             // }
         }
     } else {
+        qDebug() << touchEvent->points().size();
         scrolling = false;
     }
     
-
     event->accept();
     return true;
 }
