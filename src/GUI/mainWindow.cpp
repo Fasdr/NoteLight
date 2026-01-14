@@ -34,9 +34,6 @@ namespace {
     QString appTheme("Dark");
 
     constinit QMap<QString, QVariant> parameters;
-
-    bool inFullScreenState{false};
-    bool inMaximizedState{false};
 }
 
 
@@ -45,35 +42,15 @@ MainWindow::MainWindow(QWidget* parent) : QWidget(parent, Qt::FramelessWindowHin
                                             titleBar(this) {
     setMouseTracking(true);
     
+    // TODO: strange behavior fullscreen + maximize + fullscreen = no state
     connect(&titleBar.fullScreenButton, &QPushButton::clicked,
-            this, [this]() {
-                if (inFullScreenState) {
-                    inFullScreenState = false;
-                    if (inMaximizedState) {
-                        this->setWindowState(Qt::WindowMaximized);
-                    } else {
-                        this->setWindowState(Qt::WindowNoState);
-                    }
-                } else {
-                    inMaximizedState = this->isMaximized();
-                    inFullScreenState = true;
-                    this->setWindowState(Qt::WindowFullScreen);
-                }
-            });
+            this, [this]() { this->setWindowState(Qt::WindowFullScreen ^ this->windowState()); });
 
     connect(&titleBar.minimizeButton, &QPushButton::clicked,
-            this, [this]() { this->setWindowState(Qt::WindowMinimized); });
+            this, [this]() { this->setWindowState(Qt::WindowMinimized ^ this->windowState()); });
 
     connect(&titleBar.maximizeButton, &QPushButton::clicked,
-            this, [this]() {
-                // TODO: make maximization smooth
-                inMaximizedState = !this->isMaximized();
-                if (!inFullScreenState && inMaximizedState) {
-                    this->setWindowState(Qt::WindowMaximized);
-                } else if (!inFullScreenState && !inMaximizedState) {
-                    this->setWindowState(Qt::WindowNoState);
-                }
-            });
+            this, [this]() { this->setWindowState(Qt::WindowMaximized ^ this->windowState()); });
 
     connect(&titleBar.exitButton, &QPushButton::clicked,
             this, &MainWindow::exitApp);
@@ -96,12 +73,12 @@ MainWindow::~MainWindow() {
 void MainWindow::changeEvent(QEvent *event) {
     if (event->type() == QEvent::WindowStateChange) {
         QWindowStateChangeEvent *stateEvent = static_cast<QWindowStateChangeEvent*>(event);
-        if ((stateEvent->oldState() & Qt::WindowMinimized) && !(this->windowState() & Qt::WindowMinimized)) {
-            if (inFullScreenState) {
-                this->setWindowState(Qt::WindowFullScreen);
-            } else if (inMaximizedState) {
-                this->setWindowState(Qt::WindowMaximized);
-            }
+        // qDebug() << "Old state:" << stateEvent->oldState() << "New state:" << this->windowState();
+        if ((stateEvent->oldState() & Qt::WindowMaximized) != (this->windowState() & Qt::WindowMaximized)) {
+            titleBar.setMaximizedButton(this->windowState() & Qt::WindowMaximized);
+        }
+        if ((stateEvent->oldState() & Qt::WindowFullScreen) != (this->windowState() & Qt::WindowFullScreen)) {
+            titleBar.setFullScreenButton(this->windowState() & Qt::WindowFullScreen);
         }
     }
     

@@ -17,6 +17,10 @@ class TitleBar : public QFrame {
 
         void setVisuals(QMap<QString, QVariant>& parameters);
 
+        void setMaximizedButton(bool isMaximized);
+        void setFullScreenButton(bool isFullScreen);
+
+
     protected:
         void mousePressEvent(QMouseEvent* event) override;
 };

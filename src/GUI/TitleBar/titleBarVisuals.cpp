@@ -10,20 +10,27 @@ void TitleBar::setVisuals(QMap<QString, QVariant>& parameters) {
 
     int exMiMaButtonSize{static_cast<int>(1.375 * iconFont.pixelSize())};
 
-    fullScreenButton.setText("\ue3c2");
+    if (fullScreenButton.text().isEmpty()) {
+        fullScreenButton.setText("\ue3c2");
+    }
     fullScreenButton.setFont(iconFont);
     fullScreenButton.setFixedSize(exMiMaButtonSize, exMiMaButtonSize);
 
-    minimizeButton.setText("\ue313");
+    if (minimizeButton.text().isEmpty()) {
+        minimizeButton.setText("\ue15b");
+    }
     minimizeButton.setFont(iconFont);
     minimizeButton.setFixedSize(exMiMaButtonSize, exMiMaButtonSize);
 
-    // TODO: choose Icons depending on normal/maximized window state
-    maximizeButton.setText("\ue316");
+    if (maximizeButton.text().isEmpty()) {
+        maximizeButton.setText("\ue3c6");
+    }
     maximizeButton.setFont(iconFont);
     maximizeButton.setFixedSize(exMiMaButtonSize, exMiMaButtonSize);
 
-    exitButton.setText("\ue5cd");
+    if (exitButton.text().isEmpty()) {
+        exitButton.setText("\ue5cd");
+    }
     exitButton.setFont(iconFont);
     exitButton.setFixedSize(exMiMaButtonSize, exMiMaButtonSize);
     
@@ -74,7 +81,7 @@ void TitleBar::setVisuals(QMap<QString, QVariant>& parameters) {
             "QPushButton:pressed {"
             "    background-color: #676767;"
             "}"
-        ).arg(exMiMaButtonSize / 2).arg(iconFont.pixelSize()).arg(static_cast<int>(iconFont.pixelSize() * 10 / 40));
+        ).arg(exMiMaButtonSize / 2).arg(iconFont.pixelSize()).arg(static_cast<int>(iconFont.pixelSize() * 30 / 40));
         
         maximizeButtonStyleSheet = QString(
             "QPushButton {"
@@ -116,4 +123,20 @@ void TitleBar::setVisuals(QMap<QString, QVariant>& parameters) {
     minimizeButton.setStyleSheet(minimizeButtonStyleSheet);
     maximizeButton.setStyleSheet(maximizeButtonStyleSheet);
     exitButton.setStyleSheet(exitButtonStyleSheet);
+}
+
+void TitleBar::setMaximizedButton(bool isMaximized) {
+    if (isMaximized) {
+        maximizeButton.setText("\ue3e0");
+    } else {
+        maximizeButton.setText("\ue3c6");
+    }
+}
+
+void TitleBar::setFullScreenButton(bool isFullScreen) {
+    if (isFullScreen) {
+        fullScreenButton.setText("\ue5d1");
+    } else {
+        fullScreenButton.setText("\ue3c2");
+    }
 }
