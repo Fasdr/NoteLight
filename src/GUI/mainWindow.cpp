@@ -39,7 +39,7 @@ namespace {
 
 
 MainWindow::MainWindow(QWidget* parent) : QWidget(parent, Qt::FramelessWindowHint),
-                                            titleBar(this) {
+                                            titleBar(this), inputArea(this) {
     setMouseTracking(true);
     
     // TODO: strange behavior fullscreen + maximize + fullscreen = no state

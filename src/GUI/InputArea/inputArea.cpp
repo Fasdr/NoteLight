@@ -21,8 +21,7 @@ bool InputArea::event(QEvent* event) {
         return QWidget::event(event);
     }
     QTouchEvent* touchEvent = static_cast<QTouchEvent*>(event);
-    // qDebug() << touchEvent->points();
-    qDebug() << "Test";
+    qDebug() << touchEvent->points();
 
     event->accept();
     return true;
