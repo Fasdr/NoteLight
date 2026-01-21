@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget* parent) : QWidget(parent, Qt::FramelessWindowHin
     // setMouseTracking(true);
     inputArea.stackUnder(&titleBar);
     
-    // TODO: strange behavior fullscreen + maximize + fullscreen = no state
+    
     connect(&titleBar.fullScreenButton, &QPushButton::clicked,
             this, [this]() { this->setWindowState(Qt::WindowFullScreen ^ this->windowState()); });
 
@@ -53,7 +53,14 @@ MainWindow::MainWindow(QWidget* parent) : QWidget(parent, Qt::FramelessWindowHin
             this, [this]() { this->setWindowState(Qt::WindowMinimized ^ this->windowState()); });
 
     connect(&titleBar.maximizeButton, &QPushButton::clicked,
-            this, [this]() { this->setWindowState(Qt::WindowMaximized ^ this->windowState()); });
+            this, [this]() { 
+                if (this->windowState() & Qt::WindowFullScreen) {
+                    // TODO: strange behavior fullscreen + maximize + fullscreen = no state
+                    // Current solution is to block any changes while the window in the fullscreen mode
+                } else {
+                    this->setWindowState(Qt::WindowMaximized ^ this->windowState()); 
+                }
+            });
 
     connect(&titleBar.exitButton, &QPushButton::clicked,
             this, &MainWindow::exitApp);

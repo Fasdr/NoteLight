@@ -43,10 +43,8 @@ bool InputArea::event(QEvent* event) {
                     }
                 }
             }
-            if (count < 4) {
-                scrolling = false;
-            }
-            qDebug() << currentMove / count;
+            currentMove /= count;
+            // qDebug() << currentMove / count;
         } else {
             int idx{-1};
             for (const QTouchEvent::TouchPoint& touchPoint : touchEvent->points()) {
@@ -61,7 +59,6 @@ bool InputArea::event(QEvent* event) {
             // }
         }
     } else {
-        qDebug() << touchEvent->points().size();
         scrolling = false;
     }
     
