@@ -1,5 +1,7 @@
 # CMake
 build/
+# Clang files
+compile_commands.json
 # IDE files
 .cache/
 # Settings for the app
