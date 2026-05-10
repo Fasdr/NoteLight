@@ -138,10 +138,10 @@ void InputArea::tabletEvent(QTabletEvent* event) {
 }
 
 void InputArea::resizeEvent(QResizeEvent* event) {
-    QWidget::resizeEvent(event);
     pageWidth = this->geometry().width();
     pageHeight = pageWidth * verticalProp / horizontalProp;
     storedPixmaps.clear();
+    QWidget::resizeEvent(event);
 }
 
 QPixmap InputArea::preparePage(int pageNumber) {
