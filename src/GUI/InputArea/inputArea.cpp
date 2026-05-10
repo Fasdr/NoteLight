@@ -1,21 +1,26 @@
 #include <inputArea.h>
 
+#include <QDebug>
 #include <QEvent>
+#include <QPainter>
 #include <QPair>
+#include <QPixmap>
 #include <QPointF>
 #include <QTouchEvent>
+#include <QWidget>
 
-#include <QDebug>
+#include <algorithm>
 #include <qcontainerfwd.h>
-#include <qevent.h>
+#include <qicon.h>
 #include <qlogging.h>
-#include <qwidget.h>
+#include <utility>
 
 namespace {
     // canvas related parameters
     double horizontalProp{1};
     double verticalProp{2};
     double verticalShift{0};
+    double verticalSeparator{0.05};
     int currentPageNumber{0};
     double pageWidth{};
     double pageHeight{};
@@ -34,6 +39,8 @@ namespace {
 
 InputArea::InputArea(QWidget* parent) : QWidget(parent) {
     //    setAttribute(Qt::WA_AcceptTouchEvents, true);
+
+    document.pages.push_back(Page{});
 }
 
 void InputArea::tabletEvent(QTabletEvent* event) {
@@ -45,7 +52,10 @@ void InputArea::tabletEvent(QTabletEvent* event) {
     int onPage{currentPageNumber};
     if (yPos >= 1) {
         ++onPage;
-        yPos -= 1;
+        yPos -= 1 + verticalSeparator;
+        if (yPos < 0) {
+            yPos = 0;
+        }
     }
     static int strokePage{};
     static bool valid{};
@@ -71,10 +81,12 @@ void InputArea::tabletEvent(QTabletEvent* event) {
         }
         if (valid) {
             stroke.points.emplaceBack(xPos, yPos);
-            for (auto p : stroke.points) {
-                qDebug() << p;
+            if (onPage < document.pages.size()) {
+                document.pages[onPage].strokes.push_back(std::move(stroke));
+                // TODO: actully draw it
             }
         }
+        stroke.points.clear();
         return;
     default:
         return;
@@ -85,6 +97,36 @@ void InputArea::resizeEvent(QResizeEvent* event) {
     QWidget::resizeEvent(event);
     pageWidth = this->geometry().width();
     pageHeight = pageWidth * verticalProp / horizontalProp;
+}
+
+QPixmap InputArea::preparePage(int pageNumber) {
+    QPixmap newPage(pageWidth, pageHeight);
+    QPainter pagePainter(&newPage);
+    // TODO: add actual settings for pages
+    newPage.fill();
+    for (Stroke curStroke : document.pages[pageNumber].strokes) {
+        // TODO: different styles for this line
+        QVector<QPointF> points{curStroke.points};
+        std::for_each(points.begin(), points.end(), [](QPointF& point) {
+            point.rx() *= pageWidth;
+            point.ry() *= pageHeight;
+        });
+        pagePainter.drawPolyline(points.constData(), points.size());
+    }
+    return newPage;
+}
+
+void InputArea::paintEvent(QPaintEvent* event) {
+    QPainter painter(this);
+    int pageCount = document.pages.size();
+    double pageBeginning{-verticalShift * pageHeight};
+    int inputHeight{this->geometry().height()};
+    for (int pageNumber{currentPageNumber};
+         pageNumber < pageCount && pageBeginning < inputHeight; ++pageNumber) {
+        QPixmap curPage(preparePage(pageNumber));
+        painter.drawPixmap(0, pageBeginning, curPage);
+        pageBeginning += pageHeight * (1 + verticalSeparator);
+    }
 }
 
 InputArea::~InputArea() {}
