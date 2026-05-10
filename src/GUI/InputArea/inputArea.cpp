@@ -2,8 +2,10 @@
 
 #include <QDebug>
 #include <QEvent>
+#include <QMap>
 #include <QPainter>
 #include <QPair>
+#include <QPen>
 #include <QPixmap>
 #include <QPointF>
 #include <QTouchEvent>
@@ -13,6 +15,7 @@
 #include <qcontainerfwd.h>
 #include <qicon.h>
 #include <qlogging.h>
+#include <qpixmap.h>
 #include <utility>
 
 namespace {
@@ -25,8 +28,36 @@ namespace {
     double pageWidth{};
     double pageHeight{};
     // writing related parameters
+    enum class StrokeType { PolyLine };
     struct Stroke {
+        StrokeType type;
+        QPen pen;
         QVector<QPointF> points;
+
+        void addToPixmap(QPixmap& pixmap) {
+            switch (type) {
+            case StrokeType::PolyLine: {
+                QPainter painter(&pixmap);
+                painter.setRenderHint(QPainter::Antialiasing, true);
+                addToPainter(painter);
+                break;
+            }
+            }
+        }
+
+        void addToPainter(QPainter& painter) {
+            switch (type) {
+            case StrokeType::PolyLine: {
+                QVector<QPointF> points{this->points};
+                std::for_each(points.begin(), points.end(), [](QPointF& point) {
+                    point.rx() *= pageWidth;
+                    point.ry() *= pageHeight;
+                });
+                painter.drawPolyline(points.constData(), points.size());
+                break;
+            }
+            }
+        }
     };
     struct Page {
         QVector<Stroke> strokes;
@@ -35,6 +66,7 @@ namespace {
         QVector<Page> pages;
     };
     Document document;
+    QMap<int, QPixmap> storedPixmaps;
 }
 
 InputArea::InputArea(QWidget* parent) : QWidget(parent) {
@@ -66,6 +98,10 @@ void InputArea::tabletEvent(QTabletEvent* event) {
         strokePage = onPage;
         valid = true;
         stroke.points.emplaceBack(xPos, yPos);
+        // set up stroke
+        stroke.type = StrokeType::PolyLine;
+        stroke.pen =
+            QPen(Qt::green, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
         return;
     case QEvent::TabletMove:
         if (strokePage != onPage) {
@@ -82,8 +118,16 @@ void InputArea::tabletEvent(QTabletEvent* event) {
         if (valid) {
             stroke.points.emplaceBack(xPos, yPos);
             if (onPage < document.pages.size()) {
+                if (storedPixmaps.contains(onPage)) {
+                    stroke.addToPixmap(storedPixmaps[onPage]);
+                } else {
+                    QPixmap curPage(preparePage(onPage));
+                    stroke.addToPixmap(curPage);
+                    storedPixmaps[onPage] = std::move(curPage);
+                }
                 document.pages[onPage].strokes.push_back(std::move(stroke));
-                // TODO: actully draw it
+                // TODO: actully draw it, with targeted update?!
+                update();
             }
         }
         stroke.points.clear();
@@ -97,34 +141,37 @@ void InputArea::resizeEvent(QResizeEvent* event) {
     QWidget::resizeEvent(event);
     pageWidth = this->geometry().width();
     pageHeight = pageWidth * verticalProp / horizontalProp;
+    storedPixmaps.clear();
 }
 
 QPixmap InputArea::preparePage(int pageNumber) {
     QPixmap newPage(pageWidth, pageHeight);
     QPainter pagePainter(&newPage);
+    pagePainter.setRenderHint(QPainter::Antialiasing, true);
     // TODO: add actual settings for pages
     newPage.fill();
-    for (Stroke curStroke : document.pages[pageNumber].strokes) {
+    for (Stroke& curStroke : document.pages[pageNumber].strokes) {
         // TODO: different styles for this line
-        QVector<QPointF> points{curStroke.points};
-        std::for_each(points.begin(), points.end(), [](QPointF& point) {
-            point.rx() *= pageWidth;
-            point.ry() *= pageHeight;
-        });
-        pagePainter.drawPolyline(points.constData(), points.size());
+        curStroke.addToPainter(pagePainter);
     }
     return newPage;
 }
 
 void InputArea::paintEvent(QPaintEvent* event) {
     QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
     int pageCount = document.pages.size();
     double pageBeginning{-verticalShift * pageHeight};
     int inputHeight{this->geometry().height()};
     for (int pageNumber{currentPageNumber};
          pageNumber < pageCount && pageBeginning < inputHeight; ++pageNumber) {
-        QPixmap curPage(preparePage(pageNumber));
-        painter.drawPixmap(0, pageBeginning, curPage);
+        if (storedPixmaps.contains(pageNumber)) {
+            painter.drawPixmap(0, pageBeginning, storedPixmaps[pageNumber]);
+        } else {
+            QPixmap curPage(preparePage(pageNumber));
+            storedPixmaps[pageNumber] = std::move(curPage);
+            painter.drawPixmap(0, pageBeginning, curPage);
+        }
         pageBeginning += pageHeight * (1 + verticalSeparator);
     }
 }
