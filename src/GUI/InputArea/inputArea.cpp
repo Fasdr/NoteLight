@@ -33,6 +33,7 @@ namespace {
     struct Stroke {
         StrokeType type;
         QPen pen;
+        double propWidth;
         QVector<QPointF> points;
 
         void addToPixmap(QPixmap& pixmap) {
@@ -54,6 +55,7 @@ namespace {
                     point.rx() *= pageWidth;
                     point.ry() *= pageHeight;
                 });
+                pen.setWidthF(propWidth * pageWidth);
                 painter.setPen(pen);
                 painter.drawPolyline(points.constData(), points.size());
                 break;
@@ -104,6 +106,7 @@ void InputArea::tabletEvent(QTabletEvent* event) {
         stroke.type = StrokeType::PolyLine;
         stroke.pen =
             QPen(Qt::green, 10, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+        stroke.propWidth = 0.005;
         return;
     case QEvent::TabletMove:
         if (strokePage != onPage) {
