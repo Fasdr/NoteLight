@@ -15,6 +15,7 @@
 #include <qcontainerfwd.h>
 #include <qicon.h>
 #include <qlogging.h>
+#include <qnamespace.h>
 #include <qpixmap.h>
 #include <utility>
 
@@ -101,7 +102,7 @@ void InputArea::tabletEvent(QTabletEvent* event) {
         // set up stroke
         stroke.type = StrokeType::PolyLine;
         stroke.pen =
-            QPen(Qt::green, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+            QPen(Qt::green, 15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
         return;
     case QEvent::TabletMove:
         if (strokePage != onPage) {
@@ -142,7 +143,6 @@ void InputArea::resizeEvent(QResizeEvent* event) {
     pageWidth = this->geometry().width();
     pageHeight = pageWidth * verticalProp / horizontalProp;
     storedPixmaps.clear();
-    update();
 }
 
 QPixmap InputArea::preparePage(int pageNumber) {
@@ -170,8 +170,8 @@ void InputArea::paintEvent(QPaintEvent* event) {
             painter.drawPixmap(0, pageBeginning, storedPixmaps[pageNumber]);
         } else {
             QPixmap curPage(preparePage(pageNumber));
-            storedPixmaps[pageNumber] = std::move(curPage);
             painter.drawPixmap(0, pageBeginning, curPage);
+            storedPixmaps[pageNumber] = std::move(curPage);
         }
         pageBeginning += pageHeight * (1 + verticalSeparator);
     }
