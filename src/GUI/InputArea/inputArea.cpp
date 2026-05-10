@@ -54,6 +54,7 @@ namespace {
                     point.rx() *= pageWidth;
                     point.ry() *= pageHeight;
                 });
+                painter.setPen(pen);
                 painter.drawPolyline(points.constData(), points.size());
                 break;
             }
@@ -102,7 +103,7 @@ void InputArea::tabletEvent(QTabletEvent* event) {
         // set up stroke
         stroke.type = StrokeType::PolyLine;
         stroke.pen =
-            QPen(Qt::green, 15, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+            QPen(Qt::green, 10, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
         return;
     case QEvent::TabletMove:
         if (strokePage != onPage) {
