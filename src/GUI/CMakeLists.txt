@@ -1,5 +1,6 @@
 add_subdirectory(TitleBar)
 add_subdirectory(InputArea)
+add_subdirectory(ScrollBar)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 
@@ -29,4 +30,5 @@ target_link_libraries(MainWindow
     PUBLIC
         TitleBar
         InputArea
+        ScrollBar
 )

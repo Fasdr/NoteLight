@@ -3,9 +3,8 @@
 #include <QMouseEvent>
 #include <QWindow>
 
-TitleBar::TitleBar(QWidget* parent) : QFrame(parent),
-        titleBarLayout(this) {    
-    
+TitleBar::TitleBar(QWidget* parent) : QFrame(parent), titleBarLayout(this) {
+
     titleBarLayout.setContentsMargins(5, 0, 5, 0);
     titleBarLayout.setAlignment(Qt::AlignVCenter);
     titleBarLayout.addStretch();
@@ -15,13 +14,11 @@ TitleBar::TitleBar(QWidget* parent) : QFrame(parent),
     titleBarLayout.addWidget(&exitButton);
 }
 
-TitleBar::~TitleBar() {
-
-}
+TitleBar::~TitleBar() {}
 
 void TitleBar::mousePressEvent(QMouseEvent* event) {
     if (event->button() == Qt::LeftButton) {
-        QWindow *window = this->window()->windowHandle();
+        QWindow* window = this->window()->windowHandle();
         if (window) {
             bool success = window->startSystemMove();
         }

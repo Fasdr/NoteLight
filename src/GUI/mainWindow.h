@@ -1,5 +1,6 @@
 #pragma once
 #include <inputArea.h>
+#include <scrollBar.h>
 #include <titleBar.h>
 
 #include <QMap>
@@ -15,6 +16,7 @@ public:
 
     TitleBar titleBar;
     InputArea inputArea;
+    ScrollBar scrollBar;
     void setVisuals(QMap<QString, QVariant>& paramters);
 
 protected:

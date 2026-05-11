@@ -5,22 +5,21 @@
 
 class TitleBar : public QFrame {
     Q_OBJECT
-    public:
-        TitleBar(QWidget* parent = nullptr);
-        ~TitleBar();
+public:
+    TitleBar(QWidget* parent = nullptr);
+    ~TitleBar();
 
-        QHBoxLayout titleBarLayout;
-        QPushButton fullScreenButton;
-        QPushButton minimizeButton;
-        QPushButton maximizeButton;
-        QPushButton exitButton;
+    QHBoxLayout titleBarLayout;
+    QPushButton fullScreenButton;
+    QPushButton minimizeButton;
+    QPushButton maximizeButton;
+    QPushButton exitButton;
 
-        void setVisuals(QMap<QString, QVariant>& parameters);
+    void setVisuals(QMap<QString, QVariant>& parameters);
 
-        void setMaximizedButton(bool isMaximized);
-        void setFullScreenButton(bool isFullScreen);
+    void setMaximizedButton(bool isMaximized);
+    void setFullScreenButton(bool isFullScreen);
 
-
-    protected:
-        void mousePressEvent(QMouseEvent* event) override;
+protected:
+    void mousePressEvent(QMouseEvent* event) override;
 };

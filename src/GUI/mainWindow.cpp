@@ -1,9 +1,10 @@
+#include "scrollBar.h"
 #include <mainWindow.h>
 
-#include <QMouseEvent>
-#include <QWindow>
 #include <QFont>
 #include <QFontDatabase>
+#include <QMouseEvent>
+#include <QWindow>
 #include <QWindowStateChangeEvent>
 
 #include <QDebug>
@@ -22,7 +23,8 @@ namespace {
     QFont appFont{createPixelFont(pixelSize)};
 
     inline QFont getIconFont() {
-        int fontId{QFontDatabase::addApplicationFont(":/assets/fonts/MaterialIcons-Regular.ttf")};
+        int fontId{QFontDatabase::addApplicationFont(
+            ":/assets/fonts/MaterialIcons-Regular.ttf")};
         QString familyName;
         if (fontId == -1) {
             qDebug() << "Error: Could not load Material Icons!";
@@ -36,39 +38,38 @@ namespace {
     constinit QMap<QString, QVariant> parameters;
 }
 
+MainWindow::MainWindow(QWidget* parent)
+    : QWidget(parent, Qt::FramelessWindowHint), titleBar(this), inputArea(this),
+      scrollBar(this) {
 
-
-MainWindow::MainWindow(QWidget* parent) : QWidget(parent, Qt::FramelessWindowHint),
-                                            titleBar(this), inputArea(this) {
-    
-    
     // setMouseTracking(true);
-    inputArea.stackUnder(&titleBar);
-    
-    
-    connect(&titleBar.fullScreenButton, &QPushButton::clicked,
-            this, [this]() { this->setWindowState(Qt::WindowFullScreen ^ this->windowState()); });
+    scrollBar.stackUnder(&titleBar);
+    inputArea.stackUnder(&scrollBar);
 
-    connect(&titleBar.minimizeButton, &QPushButton::clicked,
-            this, [this]() { this->setWindowState(Qt::WindowMinimized ^ this->windowState()); });
+    connect(&titleBar.fullScreenButton, &QPushButton::clicked, this, [this]() {
+        this->setWindowState(Qt::WindowFullScreen ^ this->windowState());
+    });
 
-    connect(&titleBar.maximizeButton, &QPushButton::clicked,
-            this, [this]() { 
-                if (this->windowState() & Qt::WindowFullScreen) {
-                    // TODO: strange behavior fullscreen + maximize + fullscreen = no state
-                    // Current solution is to block any changes while the window in the fullscreen mode
-                } else {
-                    this->setWindowState(Qt::WindowMaximized ^ this->windowState()); 
-                }
-            });
+    connect(&titleBar.minimizeButton, &QPushButton::clicked, this, [this]() {
+        this->setWindowState(Qt::WindowMinimized ^ this->windowState());
+    });
 
-    connect(&titleBar.exitButton, &QPushButton::clicked,
-            this, &MainWindow::exitApp);
-    
+    connect(&titleBar.maximizeButton, &QPushButton::clicked, this, [this]() {
+        if (this->windowState() & Qt::WindowFullScreen) {
+            // TODO: strange behavior fullscreen + maximize + fullscreen = no
+            // state Current solution is to block any changes while the window
+            // in the fullscreen mode
+        } else {
+            this->setWindowState(Qt::WindowMaximized ^ this->windowState());
+        }
+    });
+
+    connect(&titleBar.exitButton, &QPushButton::clicked, this,
+            &MainWindow::exitApp);
 
     iconFont = getIconFont();
     // Sets up visual parameters to use in this app
-    
+
     iconFont.setPixelSize(appFont.pixelSize());
     parameters["appFont"] = appFont;
     parameters["iconFont"] = iconFont;
@@ -76,22 +77,26 @@ MainWindow::MainWindow(QWidget* parent) : QWidget(parent, Qt::FramelessWindowHin
     setVisuals(parameters);
 }
 
-MainWindow::~MainWindow() {
+MainWindow::~MainWindow() {}
 
-}
-
-void MainWindow::changeEvent(QEvent *event) {
+void MainWindow::changeEvent(QEvent* event) {
     if (event->type() == QEvent::WindowStateChange) {
-        QWindowStateChangeEvent *stateEvent = static_cast<QWindowStateChangeEvent*>(event);
-        // qDebug() << "Old state:" << stateEvent->oldState() << "New state:" << this->windowState();
-        if ((stateEvent->oldState() & Qt::WindowMaximized) != (this->windowState() & Qt::WindowMaximized)) {
-            titleBar.setMaximizedButton(this->windowState() & Qt::WindowMaximized);
+        QWindowStateChangeEvent* stateEvent =
+            static_cast<QWindowStateChangeEvent*>(event);
+        // qDebug() << "Old state:" << stateEvent->oldState() << "New state:" <<
+        // this->windowState();
+        if ((stateEvent->oldState() & Qt::WindowMaximized) !=
+            (this->windowState() & Qt::WindowMaximized)) {
+            titleBar.setMaximizedButton(this->windowState() &
+                                        Qt::WindowMaximized);
         }
-        if ((stateEvent->oldState() & Qt::WindowFullScreen) != (this->windowState() & Qt::WindowFullScreen)) {
-            titleBar.setFullScreenButton(this->windowState() & Qt::WindowFullScreen);
+        if ((stateEvent->oldState() & Qt::WindowFullScreen) !=
+            (this->windowState() & Qt::WindowFullScreen)) {
+            titleBar.setFullScreenButton(this->windowState() &
+                                         Qt::WindowFullScreen);
         }
     }
-    
+
     QWidget::changeEvent(event);
 }
 
@@ -108,6 +113,14 @@ void MainWindow::resizeEvent(QResizeEvent* event) {
     inputArea.setFixedSize(size());
     inputArea.move(0, 0);
 
+    // Sets up the scroll bar size and its position
+    QSize scrollBarSize{scrollBar.size()};
+    scrollBarSize.setWidth(2 * titleBarMargin);
+    scrollBarSize.setHeight(size().height() - 3 * titleBarMargin -
+                            titleBar.size().height());
+    scrollBar.setFixedSize(scrollBarSize);
+    scrollBar.move(0, 2 * titleBarMargin + titleBar.size().height());
+
     QWidget::resizeEvent(event);
 }
 
@@ -122,15 +135,15 @@ namespace {
 
         if (position.x() >= 0 && position.x() < resizeMargin) {
             edges |= Qt::LeftEdge;
-        } else if (mainWindow->width() - position.x() < resizeMargin 
-                    && position.x() <= mainWindow->width()) {
+        } else if (mainWindow->width() - position.x() < resizeMargin &&
+                   position.x() <= mainWindow->width()) {
             edges |= Qt::RightEdge;
         }
 
         if (position.y() >= 0 && position.y() < resizeMargin) {
             edges |= Qt::TopEdge;
-        } else if (mainWindow->height() - position.y() < resizeMargin
-                    && position.y() <= mainWindow->height()) {
+        } else if (mainWindow->height() - position.y() < resizeMargin &&
+                   position.y() <= mainWindow->height()) {
             edges |= Qt::BottomEdge;
         }
 
