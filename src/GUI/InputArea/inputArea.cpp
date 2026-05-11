@@ -86,7 +86,7 @@ void InputArea::tabletEvent(QTabletEvent* event) {
     double xPos{point.x() / pageWidth};
     double yPos{verticalShift + point.y() / pageHeight};
     int onPage{currentPageNumber};
-    if (yPos >= 1) {
+    while (yPos >= 1) {
         ++onPage;
         yPos -= 1 + verticalSeparator;
         if (yPos < 0) {
@@ -131,7 +131,7 @@ void InputArea::tabletEvent(QTabletEvent* event) {
                     storedPixmaps[onPage] = std::move(curPage);
                 }
                 document.pages[onPage].strokes.push_back(std::move(stroke));
-                // TODO: actully draw it, with targeted update?!
+                // TODO: actully draw it with targeted update?!
                 update();
             }
         }
@@ -182,3 +182,15 @@ void InputArea::paintEvent(QPaintEvent* event) {
 }
 
 InputArea::~InputArea() {}
+
+void InputArea::setScrollBar() {
+    emit signalScrollBar(
+        0, 100 * document.pages.size() * (1 + verticalSeparator), 100);
+}
+
+void InputArea::getScroll(int val) {
+    double fullShift{val / 100.0};
+    currentPageNumber = fullShift / (1 + verticalSeparator);
+    verticalShift = fullShift - currentPageNumber * (1 + verticalSeparator);
+    update();
+}

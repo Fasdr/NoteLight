@@ -8,4 +8,6 @@ public:
     ~ScrollBar();
 
     void setVisuals(QMap<QString, QVariant>& parameters);
+
+    void updateScrollBar(int min, int max, int pageSize);
 };

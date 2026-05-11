@@ -11,6 +11,11 @@ public:
 
     void setVisuals(QMap<QString, QVariant>& parameters);
     QPixmap preparePage(int pageNumber);
+    void setScrollBar();
+    void getScroll(int val);
+
+signals:
+    void signalScrollBar(int min, int max, int pageSize);
 
 protected:
     void tabletEvent(QTabletEvent* event) override;

@@ -67,6 +67,12 @@ MainWindow::MainWindow(QWidget* parent)
     connect(&titleBar.exitButton, &QPushButton::clicked, this,
             &MainWindow::exitApp);
 
+    connect(&inputArea, &InputArea::signalScrollBar, &scrollBar,
+            &ScrollBar::updateScrollBar);
+    inputArea.setScrollBar();
+
+    connect(&scrollBar, &ScrollBar::valueChanged, &inputArea,
+            &InputArea::getScroll);
     iconFont = getIconFont();
     // Sets up visual parameters to use in this app
 
