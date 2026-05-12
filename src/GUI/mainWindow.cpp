@@ -1,5 +1,6 @@
 #include "inputArea.h"
 #include "scrollBar.h"
+#include "titleBar.h"
 #include <mainWindow.h>
 
 #include <QFont>
@@ -49,6 +50,9 @@ MainWindow::MainWindow(QWidget* parent)
 
     connect(&titleBar, &TitleBar::newPageSignal, &inputArea,
             &InputArea::newPage);
+
+    connect(&titleBar, &TitleBar::newPenSignal, &inputArea,
+            &InputArea::setNewPen);
 
     connect(&titleBar.fullScreenButton, &QPushButton::clicked, this, [this]() {
         this->setWindowState(Qt::WindowFullScreen ^ this->windowState());

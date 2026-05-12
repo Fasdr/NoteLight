@@ -5,7 +5,6 @@
 #include <QMap>
 #include <QPainter>
 #include <QPair>
-#include <QPen>
 #include <QPixmap>
 #include <QPointF>
 #include <QTouchEvent>
@@ -16,7 +15,6 @@
 #include <qicon.h>
 #include <qlogging.h>
 #include <qnamespace.h>
-#include <qpixmap.h>
 #include <utility>
 
 namespace {
@@ -79,6 +77,13 @@ InputArea::InputArea(QWidget* parent) : QWidget(parent) {
     document.pages.push_back(Page{});
 }
 
+namespace {
+    QPen currentStrokePen(Qt::black, 10, Qt::SolidLine, Qt::RoundCap,
+                          Qt::RoundJoin);
+    StrokeType currentStrokeType{StrokeType::PolyLine};
+    double currentStrokePropWidth{0.005};
+}
+
 void InputArea::tabletEvent(QTabletEvent* event) {
     event->accept();
 
@@ -103,10 +108,9 @@ void InputArea::tabletEvent(QTabletEvent* event) {
         valid = true;
         stroke.points.emplaceBack(xPos, yPos);
         // set up stroke
-        stroke.type = StrokeType::PolyLine;
-        stroke.pen =
-            QPen(Qt::green, 10, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-        stroke.propWidth = 0.005;
+        stroke.type = currentStrokeType;
+        stroke.pen = currentStrokePen;
+        stroke.propWidth = currentStrokePropWidth;
         return;
     case QEvent::TabletMove:
         if (strokePage != onPage) {
@@ -199,4 +203,9 @@ void InputArea::newPage() {
     document.pages.push_back(Page{});
     setScrollBar();
     update();
+}
+
+void InputArea::setNewPen(QPen newPen, double newPropWidth) {
+    currentStrokePen = newPen;
+    currentStrokePropWidth = newPropWidth;
 }

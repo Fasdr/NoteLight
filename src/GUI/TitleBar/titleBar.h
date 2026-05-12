@@ -2,6 +2,7 @@
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QMenuBar>
+#include <QPen>
 #include <QPushButton>
 
 class TitleBar : public QFrame {
@@ -24,6 +25,7 @@ public:
 
 signals:
     void newPageSignal();
+    void newPenSignal(QPen newPen, double newPropWidth);
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;

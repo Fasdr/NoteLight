@@ -9,7 +9,13 @@ void TitleBar::setVisuals(QMap<QString, QVariant>& parameters) {
     QString appTheme{parameters["appTheme"].value<QString>()};
 
     actionsMenuBar.setFont(appFont);
-
+    {
+        QFont menuItemsFont{appFont};
+        menuItemsFont.setPixelSize(menuItemsFont.pixelSize() * 6 / 10);
+        for (auto* action : actionsMenuBar.actions()) {
+            action->menu()->setFont(menuItemsFont);
+        }
+    }
     int exMiMaButtonSize{static_cast<int>(1.375 * iconFont.pixelSize())};
 
     if (fullScreenButton.text().isEmpty()) {
@@ -53,6 +59,12 @@ void TitleBar::setVisuals(QMap<QString, QVariant>& parameters) {
 
         actionsMenuBarStyleSheet = QString("QMenuBar {"
                                            "color: white;"
+                                           "font-size: %1px"
+                                           "}"
+                                           "QMenu {"
+                                           "font-size: %1px"
+                                           "}"
+                                           "QMenu::item {"
                                            "font-size: %1px"
                                            "}")
                                        .arg(appFont.pixelSize() * 8 / 10);

@@ -1,7 +1,7 @@
 #pragma once
+#include <QPen>
 #include <QPixmap>
 #include <QWidget>
-
 class InputArea : public QWidget {
     Q_OBJECT
 
@@ -14,6 +14,7 @@ public:
     void setScrollBar();
     void getScroll(int val);
     void newPage();
+    void setNewPen(QPen newPen, double newPropWidth);
 
 signals:
     void signalScrollBar(int min, int max, int pageSize);
