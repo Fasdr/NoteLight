@@ -1,3 +1,4 @@
+#include "inputArea.h"
 #include "scrollBar.h"
 #include <mainWindow.h>
 
@@ -45,6 +46,9 @@ MainWindow::MainWindow(QWidget* parent)
     // setMouseTracking(true);
     scrollBar.stackUnder(&titleBar);
     inputArea.stackUnder(&scrollBar);
+
+    connect(&titleBar, &TitleBar::newPageSignal, &inputArea,
+            &InputArea::newPage);
 
     connect(&titleBar.fullScreenButton, &QPushButton::clicked, this, [this]() {
         this->setWindowState(Qt::WindowFullScreen ^ this->windowState());

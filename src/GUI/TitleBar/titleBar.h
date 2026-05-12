@@ -1,6 +1,7 @@
 #pragma once
 #include <QFrame>
 #include <QHBoxLayout>
+#include <QMenuBar>
 #include <QPushButton>
 
 class TitleBar : public QFrame {
@@ -10,6 +11,7 @@ public:
     ~TitleBar();
 
     QHBoxLayout titleBarLayout;
+    QMenuBar actionsMenuBar;
     QPushButton fullScreenButton;
     QPushButton minimizeButton;
     QPushButton maximizeButton;
@@ -19,6 +21,9 @@ public:
 
     void setMaximizedButton(bool isMaximized);
     void setFullScreenButton(bool isFullScreen);
+
+signals:
+    void newPageSignal();
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;

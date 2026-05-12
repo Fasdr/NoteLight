@@ -194,3 +194,9 @@ void InputArea::getScroll(int val) {
     verticalShift = fullShift - currentPageNumber * (1 + verticalSeparator);
     update();
 }
+
+void InputArea::newPage() {
+    document.pages.push_back(Page{});
+    setScrollBar();
+    update();
+}

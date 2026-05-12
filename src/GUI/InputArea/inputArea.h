@@ -13,6 +13,7 @@ public:
     QPixmap preparePage(int pageNumber);
     void setScrollBar();
     void getScroll(int val);
+    void newPage();
 
 signals:
     void signalScrollBar(int min, int max, int pageSize);
