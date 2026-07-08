@@ -22,10 +22,11 @@ namespace {
     double horizontalProp{1};
     double verticalProp{2};
     double verticalShift{0};
-    double verticalSeparator{0.05};
+    double verticalSeparator{0.02};
     int currentPageNumber{0};
     double pageWidth{};
     double pageHeight{};
+    double windowHeight{};
     // writing related parameters
     enum class StrokeType { PolyLine };
     struct Stroke {
@@ -135,7 +136,7 @@ void InputArea::tabletEvent(QTabletEvent* event) {
                     storedPixmaps[onPage] = std::move(curPage);
                 }
                 document.pages[onPage].strokes.push_back(std::move(stroke));
-                // TODO: actully draw it with targeted update?!
+                // TODO: actully draw it with a targeted update?!
                 update();
             }
         }
@@ -149,7 +150,9 @@ void InputArea::tabletEvent(QTabletEvent* event) {
 void InputArea::resizeEvent(QResizeEvent* event) {
     QWidget::resizeEvent(event);
     pageWidth = this->geometry().width();
+    windowHeight = this->geometry().height();
     pageHeight = pageWidth * verticalProp / horizontalProp;
+    setScrollBar();
     storedPixmaps.clear();
 }
 
@@ -187,16 +190,27 @@ void InputArea::paintEvent(QPaintEvent* event) {
 
 InputArea::~InputArea() {}
 
-void InputArea::setScrollBar() {
-    emit signalScrollBar(
-        0, 100 * document.pages.size() * (1 + verticalSeparator), 100);
-}
-
 void InputArea::getScroll(int val) {
     double fullShift{val / 100.0};
     currentPageNumber = fullShift / (1 + verticalSeparator);
+    if (currentPageNumber < 0) {
+        currentPageNumber = 0;
+    }
     verticalShift = fullShift - currentPageNumber * (1 + verticalSeparator);
     update();
+}
+
+void InputArea::setScrollBar() {
+    int oneFullStep{100};
+    int extraSpaceTop = -oneFullStep * verticalSeparator;
+    int extraSpacePage = (1 + verticalSeparator) * oneFullStep -
+                         windowHeight * oneFullStep / pageHeight;
+    qDebug() << extraSpacePage;
+    extraSpacePage = std::max(0, extraSpacePage);
+    int extraSpaceBottom =
+        oneFullStep * ((document.pages.size() - 1) * (1 + verticalSeparator)) +
+        extraSpacePage;
+    emit signalScrollBar(extraSpaceTop, extraSpaceBottom, oneFullStep);
 }
 
 void InputArea::newPage() {
