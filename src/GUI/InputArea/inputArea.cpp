@@ -205,7 +205,6 @@ void InputArea::setScrollBar() {
     int extraSpaceTop = -oneFullStep * verticalSeparator;
     int extraSpacePage = (1 + verticalSeparator) * oneFullStep -
                          windowHeight * oneFullStep / pageHeight;
-    qDebug() << extraSpacePage;
     extraSpacePage = std::max(0, extraSpacePage);
     int extraSpaceBottom =
         oneFullStep * ((document.pages.size() - 1) * (1 + verticalSeparator)) +
