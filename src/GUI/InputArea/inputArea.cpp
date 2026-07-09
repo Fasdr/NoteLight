@@ -248,11 +248,11 @@ void InputArea::redoLast() {
         return;
     }
     auto [lastPage, stroke] = storedChanges.pop();
-
-    document.pages[lastPage].strokes.push_back(std::move(stroke));
     if (storedPixmaps.contains(lastPage)) {
         stroke.addToPixmap(storedPixmaps[lastPage]);
     }
+    document.pages[lastPage].strokes.push_back(std::move(stroke));
+    entriesHistory.push(lastPage);
     update();
 }
 
