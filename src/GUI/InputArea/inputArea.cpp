@@ -1,3 +1,5 @@
+#include <cstddef>
+#include <deque>
 #include <inputArea.h>
 
 #include <QDebug>
@@ -72,6 +74,43 @@ namespace {
     QMap<int, QPixmap> storedPixmaps;
 }
 
+namespace {
+    // undo/redo
+
+    template <class T> class EvictingStack {
+    private:
+        std::deque<T> data;
+        std::size_t maxSize{};
+
+    public:
+        EvictingStack(std::size_t maxSize) : maxSize(maxSize) {}
+        bool const empty() {
+            return data.empty();
+        }
+        T pop() {
+            T tmp{std::move(data.back())};
+            data.pop_back();
+            return tmp;
+        }
+        void push(const T& elem) {
+            data.push_back(elem);
+            if (data.size() > maxSize) {
+                data.pop_front();
+            }
+        }
+        void push(T&& elem) {
+            data.push_back(std::move(elem));
+            if (data.size() > maxSize) {
+                data.pop_front();
+            }
+        }
+    };
+
+    int maxHistorySize{200};
+    EvictingStack<int> entriesHistory(maxHistorySize);
+    EvictingStack<QPair<int, Stroke>> storedChanges(maxHistorySize);
+}
+
 InputArea::InputArea(QWidget* parent) : QWidget(parent) {
     //    setAttribute(Qt::WA_AcceptTouchEvents, true);
 
@@ -136,6 +175,7 @@ void InputArea::tabletEvent(QTabletEvent* event) {
                     storedPixmaps[onPage] = std::move(curPage);
                 }
                 document.pages[onPage].strokes.push_back(std::move(stroke));
+                entriesHistory.push(onPage);
                 // TODO: actully draw it with a targeted update?!
                 update();
             }
@@ -189,6 +229,32 @@ void InputArea::paintEvent(QPaintEvent* event) {
 }
 
 InputArea::~InputArea() {}
+
+void InputArea::undoLast() {
+    if (entriesHistory.empty()) {
+        return;
+    }
+    int lastPage{entriesHistory.pop()};
+    storedChanges.push({lastPage, document.pages[lastPage].strokes.back()});
+    document.pages[lastPage].strokes.pop_back();
+    if (auto it{storedPixmaps.find(lastPage)}; it != storedPixmaps.end()) {
+        storedPixmaps.erase(storedPixmaps.find(lastPage));
+    }
+    update();
+}
+
+void InputArea::redoLast() {
+    if (storedChanges.empty()) {
+        return;
+    }
+    auto [lastPage, stroke] = storedChanges.pop();
+
+    document.pages[lastPage].strokes.push_back(std::move(stroke));
+    if (storedPixmaps.contains(lastPage)) {
+        stroke.addToPixmap(storedPixmaps[lastPage]);
+    }
+    update();
+}
 
 void InputArea::getScroll(int val) {
     double fullShift{val / 100.0};

@@ -18,6 +18,18 @@ void TitleBar::setVisuals(QMap<QString, QVariant>& parameters) {
     }
     int exMiMaButtonSize{static_cast<int>(1.375 * iconFont.pixelSize())};
 
+    if (undoButton.text().isEmpty()) {
+        undoButton.setText("\ue166");
+    }
+    undoButton.setFont(iconFont);
+    undoButton.setFixedSize(exMiMaButtonSize, exMiMaButtonSize);
+
+    if (redoButton.text().isEmpty()) {
+        redoButton.setText("\ue15a");
+    }
+    redoButton.setFont(iconFont);
+    redoButton.setFixedSize(exMiMaButtonSize, exMiMaButtonSize);
+
     if (fullScreenButton.text().isEmpty()) {
         fullScreenButton.setText("\ue3c2");
     }
@@ -44,6 +56,8 @@ void TitleBar::setVisuals(QMap<QString, QVariant>& parameters) {
 
     QString titleBarStyleSheet;
     QString actionsMenuBarStyleSheet;
+    QString undoButtonStyleSheet;
+    QString redoButtonStyleSheet;
     QString fullScreenButtonStyleSheet;
     QString minimizeButtonStyleSheet;
     QString maximizeButtonStyleSheet;
@@ -68,6 +82,45 @@ void TitleBar::setVisuals(QMap<QString, QVariant>& parameters) {
                                            "font-size: %1px"
                                            "}")
                                        .arg(appFont.pixelSize() * 8 / 10);
+
+        undoButtonStyleSheet =
+            QString("QPushButton {"
+                    "background-color: transparent;"
+                    "border: none;"
+                    "border-radius: %1px;"
+                    "color: white;"
+                    "font-size: %2px;"
+                    "padding-top: %3px;"
+                    "}"
+                    "QPushButton:hover {"
+                    "    background-color: #c7c5c6;"
+                    "}"
+                    "QPushButton:pressed {"
+                    "    background-color: #676767;"
+                    "}")
+                .arg(exMiMaButtonSize / 2)
+                .arg(iconFont.pixelSize())
+                .arg(static_cast<int>(iconFont.pixelSize() * 12 / 40));
+
+        redoButtonStyleSheet =
+            QString("QPushButton {"
+                    "background-color: transparent;"
+                    "border: none;"
+                    "border-radius: %1px;"
+                    "color: white;"
+                    "font-size: %2px;"
+                    "padding-top: %3px;"
+                    "}"
+                    "QPushButton:hover {"
+                    "    background-color: #c7c5c6;"
+                    "}"
+                    "QPushButton:pressed {"
+                    "    background-color: #676767;"
+                    "}")
+                .arg(exMiMaButtonSize / 2)
+                .arg(iconFont.pixelSize())
+                .arg(static_cast<int>(iconFont.pixelSize() * 12 / 40));
+
         fullScreenButtonStyleSheet =
             QString("QPushButton {"
                     "background-color: transparent;"
@@ -147,6 +200,8 @@ void TitleBar::setVisuals(QMap<QString, QVariant>& parameters) {
 
     setStyleSheet(titleBarStyleSheet);
     actionsMenuBar.setStyleSheet(actionsMenuBarStyleSheet);
+    undoButton.setStyleSheet(undoButtonStyleSheet);
+    redoButton.setStyleSheet(redoButtonStyleSheet);
     fullScreenButton.setStyleSheet(fullScreenButtonStyleSheet);
     minimizeButton.setStyleSheet(minimizeButtonStyleSheet);
     maximizeButton.setStyleSheet(maximizeButtonStyleSheet);

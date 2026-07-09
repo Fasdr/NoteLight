@@ -4,6 +4,7 @@
 #include <QMenuBar>
 #include <QPen>
 #include <QPushButton>
+#include <qpushbutton.h>
 
 class TitleBar : public QFrame {
     Q_OBJECT
@@ -13,6 +14,8 @@ public:
 
     QHBoxLayout titleBarLayout;
     QMenuBar actionsMenuBar;
+    QPushButton undoButton;
+    QPushButton redoButton;
     QPushButton fullScreenButton;
     QPushButton minimizeButton;
     QPushButton maximizeButton;

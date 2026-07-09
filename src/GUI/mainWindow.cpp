@@ -10,6 +10,7 @@
 #include <QWindowStateChangeEvent>
 
 #include <QDebug>
+#include <qpushbutton.h>
 
 void initMyResources() {
     Q_INIT_RESOURCE(resources);
@@ -53,6 +54,12 @@ MainWindow::MainWindow(QWidget* parent)
 
     connect(&titleBar, &TitleBar::newPenSignal, &inputArea,
             &InputArea::setNewPen);
+
+    connect(&titleBar.undoButton, &QPushButton::clicked, &inputArea,
+            &InputArea::undoLast);
+
+    connect(&titleBar.redoButton, &QPushButton::clicked, &inputArea,
+            &InputArea::redoLast);
 
     connect(&titleBar.fullScreenButton, &QPushButton::clicked, this, [this]() {
         this->setWindowState(Qt::WindowFullScreen ^ this->windowState());

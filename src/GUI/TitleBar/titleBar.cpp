@@ -59,7 +59,9 @@ TitleBar::TitleBar(QWidget* parent) : QFrame(parent), titleBarLayout(this) {
     static QMenu pageMenu{"Page"};
     setupPageMenu(pageMenu, this);
     actionsMenuBar.addMenu(&pageMenu);
-
+    // TODO: align properly
+    titleBarLayout.addWidget(&undoButton);
+    titleBarLayout.addWidget(&redoButton);
     titleBarLayout.addStretch();
 
     titleBarLayout.addWidget(&fullScreenButton);

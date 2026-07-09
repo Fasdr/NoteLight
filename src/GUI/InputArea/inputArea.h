@@ -15,6 +15,8 @@ public:
     void getScroll(int val);
     void newPage();
     void setNewPen(QPen newPen, double newPropWidth);
+    void undoLast();
+    void redoLast();
 
 signals:
     void signalScrollBar(int min, int max, int pageSize);
