@@ -140,14 +140,23 @@ void InputArea::tabletEvent(QTabletEvent* event) {
     }
     static int strokePage{};
     static bool valid{};
+    static bool selectionMode{};
     static Stroke stroke;
 
-    qDebug() << event->type();
-    qDebug() << event->buttons();
+    auto actualEvent{event->type()};
+    bool selecting{(event->buttons() & Qt::MiddleButton) != 0};
+    if (selecting) {
+        selectionMode = true;
+        if (actualEvent == QEvent::TabletRelease) {
+            actualEvent = QEvent::TabletMove;
+        }
+    }
+
     switch (event->type()) {
     case QEvent::TabletPress:
         strokePage = onPage;
         valid = true;
+        selectionMode = false;
         stroke.points.emplaceBack(xPos, yPos);
         // set up stroke
         stroke.type = currentStrokeType;
