@@ -144,8 +144,6 @@ void InputArea::tabletEvent(QTabletEvent* event) {
     static bool selectionMode{};
     static Stroke stroke;
 
-    qDebug() << "Event: " << event->type() << " Buttons: " << event->buttons();
-
     auto actualEvent{event->type()};
     bool selecting{(event->buttons() & Qt::MiddleButton) != 0};
     if (selecting) {
