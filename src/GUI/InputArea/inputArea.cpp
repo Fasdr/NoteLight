@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <qcontainerfwd.h>
+#include <qcoreevent.h>
 #include <qicon.h>
 #include <qlogging.h>
 #include <qnamespace.h>
@@ -143,14 +144,17 @@ void InputArea::tabletEvent(QTabletEvent* event) {
     static bool selectionMode{};
     static Stroke stroke;
 
-    qDebug() << "Event: " << event->type() << " Buttons: " << event->buttons();
+    // qDebug() << "Event: " << event->type() << " Buttons: " <<
+    // event->buttons();
+
     auto actualEvent{event->type()};
     bool selecting{(event->buttons() & Qt::MiddleButton) != 0};
     if (selecting) {
         selectionMode = true;
-        if (actualEvent == QEvent::TabletRelease) {
-            actualEvent = QEvent::TabletMove;
-        }
+    }
+    if (actualEvent == QEvent::TabletRelease &&
+        event->buttons() != Qt::NoButton) {
+        actualEvent = QEvent::TabletMove;
     }
 
     switch (actualEvent) {
