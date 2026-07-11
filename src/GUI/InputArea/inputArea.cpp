@@ -143,6 +143,7 @@ void InputArea::tabletEvent(QTabletEvent* event) {
     static Stroke stroke;
 
     qDebug() << event->type();
+    qDebug() << event->buttons();
     switch (event->type()) {
     case QEvent::TabletPress:
         strokePage = onPage;
