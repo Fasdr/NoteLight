@@ -18,6 +18,7 @@
 #include <qicon.h>
 #include <qlogging.h>
 #include <qnamespace.h>
+#include <qpolygon.h>
 #include <utility>
 
 namespace {
@@ -36,6 +37,7 @@ namespace {
         StrokeType type;
         QPen pen;
         double propWidth;
+        unsigned int deletionId;
         QVector<QPointF> points;
 
         void addToPixmap(QPixmap& pixmap) {
@@ -126,7 +128,31 @@ namespace {
 }
 
 namespace {
-    void processSelection(int onPage, Stroke stroke) {}
+    unsigned int curDelId{};
+    void processSelection(int onPage, Stroke selectionStroke) {
+        // TODO: Add other selection options (now defaulted to deletion)
+        selectionStroke.deletionId = ++curDelId;
+        QPolygonF selectionPoly;
+        for (QPointF& point : selectionStroke.points) {
+            selectionPoly << point;
+        }
+        bool foundStrokes{};
+        for (Stroke& stroke : document.pages[onPage].strokes) {
+            for (QPointF& point : stroke.points) {
+                if (selectionPoly.containsPoint(point, Qt::OddEvenFill)) {
+                    stroke.deletionId = curDelId;
+                    foundStrokes = true;
+                    break;
+                }
+            }
+        }
+        if (foundStrokes) {
+            if (auto it{storedPixmaps.find(onPage)};
+                it != storedPixmaps.end()) {
+                storedPixmaps.erase(it);
+            }
+        }
+    }
 }
 
 void InputArea::tabletEvent(QTabletEvent* event) {
@@ -168,6 +194,7 @@ void InputArea::tabletEvent(QTabletEvent* event) {
         stroke.type = currentStrokeType;
         stroke.pen = currentStrokePen;
         stroke.propWidth = currentStrokePropWidth;
+        stroke.deletionId = 0;
         return;
     case QEvent::TabletMove:
         if (strokePage != onPage) {
@@ -186,6 +213,7 @@ void InputArea::tabletEvent(QTabletEvent* event) {
             if (onPage < document.pages.size()) {
                 if (selectionMode) {
                     processSelection(onPage, std::move(stroke));
+                    update();
                 } else {
                     if (storedPixmaps.contains(onPage)) {
                         stroke.addToPixmap(storedPixmaps[onPage]);
@@ -224,6 +252,9 @@ QPixmap InputArea::preparePage(int pageNumber) {
     // TODO: add actual settings for pages
     newPage.fill();
     for (Stroke& curStroke : document.pages[pageNumber].strokes) {
+        if (curStroke.deletionId != 0ul) {
+            continue;
+        }
         // TODO: different styles for this line
         curStroke.addToPainter(pagePainter);
     }
