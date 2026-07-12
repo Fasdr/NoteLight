@@ -125,6 +125,10 @@ namespace {
     double currentStrokePropWidth{0.005};
 }
 
+namespace {
+    void processSelection(int onPage, Stroke stroke) {}
+}
+
 void InputArea::tabletEvent(QTabletEvent* event) {
     event->accept();
 
@@ -180,17 +184,21 @@ void InputArea::tabletEvent(QTabletEvent* event) {
         if (valid) {
             stroke.points.emplaceBack(xPos, yPos);
             if (onPage < document.pages.size()) {
-                if (storedPixmaps.contains(onPage)) {
-                    stroke.addToPixmap(storedPixmaps[onPage]);
+                if (selectionMode) {
+                    processSelection(onPage, std::move(stroke));
                 } else {
-                    QPixmap curPage(preparePage(onPage));
-                    stroke.addToPixmap(curPage);
-                    storedPixmaps[onPage] = std::move(curPage);
+                    if (storedPixmaps.contains(onPage)) {
+                        stroke.addToPixmap(storedPixmaps[onPage]);
+                    } else {
+                        QPixmap curPage(preparePage(onPage));
+                        stroke.addToPixmap(curPage);
+                        storedPixmaps[onPage] = std::move(curPage);
+                    }
+                    document.pages[onPage].strokes.push_back(std::move(stroke));
+                    entriesHistory.push(onPage);
+                    // TODO: actully draw it with a targeted update?!
+                    update();
                 }
-                document.pages[onPage].strokes.push_back(std::move(stroke));
-                entriesHistory.push(onPage);
-                // TODO: actully draw it with a targeted update?!
-                update();
             }
         }
         stroke.points.clear();
