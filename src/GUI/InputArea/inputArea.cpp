@@ -32,7 +32,7 @@ namespace {
     double pageHeight{};
     double windowHeight{};
     // writing related parameters
-    enum class StrokeType { PolyLine };
+    enum class StrokeType { PolyLine, DeletionPoly, SelectionPoly };
     struct Stroke {
         StrokeType type;
         QPen pen;
@@ -48,6 +48,8 @@ namespace {
                 addToPainter(painter);
                 break;
             }
+            default:
+                break;
             }
         }
 
@@ -64,6 +66,8 @@ namespace {
                 painter.drawPolyline(points.constData(), points.size());
                 break;
             }
+            default:
+                break;
             }
         }
     };
@@ -130,7 +134,7 @@ namespace {
 namespace {
     unsigned int curDelId{};
     void processSelection(int onPage, Stroke selectionStroke) {
-        // TODO: Add other selection options (now defaulted to deletion)
+        // TODO: add other selection options (now defaulted to deletion)
         selectionStroke.deletionId = ++curDelId;
         QPolygonF selectionPoly;
         for (QPointF& point : selectionStroke.points) {
@@ -138,6 +142,9 @@ namespace {
         }
         bool foundStrokes{};
         for (Stroke& stroke : document.pages[onPage].strokes) {
+            if (stroke.deletionId != 0u) {
+                continue;
+            }
             for (QPointF& point : stroke.points) {
                 if (selectionPoly.containsPoint(point, Qt::OddEvenFill)) {
                     stroke.deletionId = curDelId;
@@ -151,6 +158,10 @@ namespace {
                 it != storedPixmaps.end()) {
                 storedPixmaps.erase(it);
             }
+            selectionStroke.type = StrokeType::DeletionPoly;
+            document.pages[onPage].strokes.push_back(
+                std::move(selectionStroke));
+            entriesHistory.push(onPage);
         }
     }
 }
@@ -224,7 +235,7 @@ void InputArea::tabletEvent(QTabletEvent* event) {
                     }
                     document.pages[onPage].strokes.push_back(std::move(stroke));
                     entriesHistory.push(onPage);
-                    // TODO: actully draw it with a targeted update?!
+                    // TODO: actually draw it with a targeted update?!
                     update();
                 }
             }
@@ -287,10 +298,26 @@ void InputArea::undoLast() {
         return;
     }
     int lastPage{entriesHistory.pop()};
-    storedChanges.push({lastPage, document.pages[lastPage].strokes.back()});
-    document.pages[lastPage].strokes.pop_back();
-    if (auto it{storedPixmaps.find(lastPage)}; it != storedPixmaps.end()) {
-        storedPixmaps.erase(storedPixmaps.find(lastPage));
+    Stroke& stroke{document.pages[lastPage].strokes.back()};
+    if (stroke.type == StrokeType::DeletionPoly) {
+        unsigned int delId{stroke.deletionId};
+        for (Stroke& oldStroke : document.pages[lastPage].strokes) {
+            if (oldStroke.deletionId == delId) {
+                oldStroke.deletionId = 0u;
+            }
+        }
+        stroke.type = StrokeType::SelectionPoly;
+        storedChanges.push({lastPage, stroke});
+        document.pages[lastPage].strokes.pop_back();
+        if (auto it{storedPixmaps.find(lastPage)}; it != storedPixmaps.end()) {
+            storedPixmaps.erase(storedPixmaps.find(lastPage));
+        }
+    } else {
+        storedChanges.push({lastPage, stroke});
+        document.pages[lastPage].strokes.pop_back();
+        if (auto it{storedPixmaps.find(lastPage)}; it != storedPixmaps.end()) {
+            storedPixmaps.erase(storedPixmaps.find(lastPage));
+        }
     }
     update();
 }
@@ -300,11 +327,15 @@ void InputArea::redoLast() {
         return;
     }
     auto [lastPage, stroke] = storedChanges.pop();
-    if (storedPixmaps.contains(lastPage)) {
-        stroke.addToPixmap(storedPixmaps[lastPage]);
+    if (stroke.type == StrokeType::SelectionPoly) {
+        processSelection(lastPage, std::move(stroke));
+    } else {
+        if (storedPixmaps.contains(lastPage)) {
+            stroke.addToPixmap(storedPixmaps[lastPage]);
+        }
+        document.pages[lastPage].strokes.push_back(std::move(stroke));
+        entriesHistory.push(lastPage);
     }
-    document.pages[lastPage].strokes.push_back(std::move(stroke));
-    entriesHistory.push(lastPage);
     update();
 }
 
